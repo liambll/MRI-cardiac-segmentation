@@ -25,7 +25,7 @@ root
 
 #### 1. How did you verify that you are parsing the contours correctly?
 I verify that the contours are parsed correctly by:
-- writing unittest for parsing functions to ensure it has the intended output
+- writing unittest for parsing functions to ensure they have the intended output
 - saving the generated outputs of DICOM image data and contour binary mask side-by-side and visually comparing the outputs.
 There 96 matching DICOM-contour pairs. The generated outputs for these pairs are available at: https://drive.google.com/drive/folders/1Gq05iVeGwnDG3coyE3WQr1GccCZ0O8lX?usp=sharing
 
