@@ -20,7 +20,7 @@ root
 #### Assumption
 - The pipeline only parse DICOM images and i-contour files that are matched together. Files that do not have corresponding DICOM/i-contour counterpart are probably not useful at the moment and will not be parsed.
 - The pipeline keep the parsed output in memory (for subsequent processing) instead of saving the output to storage
-- There is no information on how a DICOM image should be matched with a contour file. I make a guess that for a patient, a __XYZ__.dcm DICOM image should be match with IM-0001-0__XYZ__-icontour-manual.txt contour file.
+- There is no information on how a DICOM image should be matched with a contour file. I make a guess that for a patient, a XYZ.dcm DICOM image should be match with IM-0001-0XYZ-icontour-manual.txt contour file.
 
 
 #### 1. How did you verify that you are parsing the contours correctly?
