@@ -53,19 +53,19 @@ In _parse_dicom_file_ function, check if an attribute exists in dcm object inste
     except AttributeError:
         slope = 0.0
 ```
-<br/>In _parse_dicom_file_ function, the below logic might miss out required data transformation in cases where intercept or slope is actually zero
+<br/>In _parse_dicom_file_ function, the below logic might miss out required data transformation in cases where intercept or slope is actually zero (although slope=0.0 means the DICOM data might not be correct and needs to be verified)
 ```python
     if intercept != 0.0 and slope != 0.0:
         dcm_image = dcm_image*slope + intercept
 ```
 
-<br/>In _parse_dicom_file_ function, it is strange that pixel data is stored in a dict instead of being returned directly. I suppose we might want to add in attributes other than pixel data later, so I did not make any change here.
+<br/>In _parse_dicom_file_ function, it is strange that pixel data is stored in a dict instead of being returned directly. I suppose we might want to add in attributes other than pixel data later, so I did not make any change here
 ```python
     dcm_dict = {PIXEL_FIELD: dcm_image}
     return dcm_dict
 ```     
 
-<br/>In _poly_to_mask_ function, it might be better to also draw the outline to avoid missing out pixels, although this probably does not affect the model result. I did not make this change
+<br/>In _poly_to_mask_ function, it might be better to also draw with outline=1 to avoid missing out pixels, although this probably does not affect the model result. I did not make this change
 ```python
     ImageDraw.Draw(img).polygon(xy=polygon, outline=0, fill=1)
 ```
