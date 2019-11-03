@@ -1,4 +1,20 @@
-# dicom-code-challenge
+## Overview
+The project aims to parse DICOM and corresponding Contour files and prepare a dataset for machine learning model training.
+
+Relevant code files:
+```python
+root
+ |---pipelines
+ |     |------pipeline_dicom_contour.py: This is the main pipeline that create ImageData object to perform the parsing and prepare dataset
+ |---utils
+ |     |---parsing.py: contains provided file/data parsing functions
+ |     |---dataset.py: contains ImageData class (for parsing) and data_geneartor (for generating data for training epoch)
+ |---tests
+       |---unit
+            |---utils
+                 |----test_parsing.py: contains unittest for utils/parsing.py
+                 |----test_dataset.py: contains unittest for utils/dataset.py
+```
 
 ## Part 1: Parse the DICOM images and Contour Files
 __Assumption:__
