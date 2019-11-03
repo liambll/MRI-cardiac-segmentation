@@ -37,7 +37,7 @@ I made the following changes to the code:
 - add in input validation for parsing functions, e.g check if file exists, check if a value can be parsed to float
 - replace some hard-coded variables with global variables to avoid inconsistency
 - perform minor refactoring to handle some strange logics:
-  - In _parse_dicom_file_ function, check if a key exist in dcm object instead of trying to run the code and catch exception:
+- [x]In _parse_dicom_file_ function, check if a key exist in dcm object instead of trying to run the code and catch exception:
 ```python
     try:
         intercept = dcm.RescaleIntercept
@@ -49,13 +49,13 @@ I made the following changes to the code:
         slope = 0.0
 ```
   
-  - In _parse_dicom_file_ function, the below logic might miss out required data transformation in cases where intercept or slope is actually zero
+- [x]In _parse_dicom_file_ function, the below logic might miss out required data transformation in cases where intercept or slope is actually zero
 ```python
     if intercept != 0.0 and slope != 0.0:
                 dcm_image = dcm_image*slope + intercept
 ```  
 
-  - In _poly_to_mask_ function, it might be better to also draw the outline to avoid missing out pixels, altough this probably does not affect the model result. I did not make this change.
+- [ ]In _poly_to_mask_ function, it might be better to also draw the outline to avoid missing out pixels, altough this probably does not affect the model result. I did not make this change.
 ```python
     ImageDraw.Draw(img).polygon(xy=polygon, outline=0, fill=1)
 ```
