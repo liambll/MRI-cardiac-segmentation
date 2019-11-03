@@ -8,7 +8,7 @@ import numpy as np
 from PIL import Image, ImageDraw
 
 
-# global variable:
+# global variable for dicom file format
 INTERCEPT_FIELD = 'RescaleIntercept'
 SLOPE_FIELD = 'RescaleSlope'
 PIXEL_FIELD = 'pixel_data'
@@ -28,11 +28,12 @@ def parse_contour_file(filename):
     with open(filename, 'r') as infile:
         for line in infile:
             coords = line.strip().split()
-
-            x_coord = float(coords[0])
-            y_coord = float(coords[1])
+            try:
+                x_coord = float(coords[0])
+                y_coord = float(coords[1])
+            except ValueError:
+                raise ValueError('Some coordinates are not numeric.')
             coords_lst.append((x_coord, y_coord))
-
     return coords_lst
 
 
@@ -53,10 +54,15 @@ def parse_dicom_file(filename):
     
     dcm_image = dcm.pixel_array
     if INTERCEPT_FIELD in dcm and SLOPE_FIELD in dcm:
-        dcm_image = dcm_image*dcm.SLOPE_FIELD + dcm.INTERCEPT_FIELD
+        try:
+            slope = float(dcm.SLOPE_FIELD)
+            intercept = float(dcm.INTERCEPT_FIELD)
+        except ValueError:
+            raise ValueError('Intercept or slope is not numeric.')
+        dcm_image = dcm_image*slope + intercept
+        
     dcm_dict = {PIXEL_FIELD: dcm_image}
     return dcm_dict
-
 
 
 def poly_to_mask(polygon, width, height):

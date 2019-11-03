@@ -14,7 +14,7 @@ import traceback
 import logging
 
 
-# global variable
+# global variables for dicoms and contours folders
 LINK_DICOM_FIELD = 'patient_id'
 LINK_CONTOUR_FIED = 'original_id'
 ICONTOUR_SUBFOLDER = 'i-contours'
@@ -135,7 +135,7 @@ class ImageData:
         for (patient_id, dicom_file, contour_file) in self.dicomn_contour_pairs:
             try: 
                 img_id = patient_id + DELIM + os.path.split(dicom_file)[-1]
-                img_data = parsing.parse_dicom_file(dicom_file, pixel_field=parsing.PIXEL_FIELD)[parsing.PIXEL_FIELD]
+                img_data = parsing.parse_dicom_file(dicom_file)[parsing.PIXEL_FIELD]
                 countour_data = parsing.parse_contour_file(contour_file)
                 mask = parsing.poly_to_mask(countour_data, img_data.shape[1], img_data.shape[0])
                 self.dataset.append((img_id, img_data, mask))
