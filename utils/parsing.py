@@ -31,7 +31,7 @@ def parse_contour_file(filename):
                 x_coord = float(coords[0])
                 y_coord = float(coords[1])
             except ValueError:
-                raise ValueError('Some coordinates are not numeric.')
+                raise ValueError('Coordinates do not follow expected format.')
             coords_lst.append((x_coord, y_coord))
     return coords_lst
 
