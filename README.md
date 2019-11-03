@@ -22,7 +22,7 @@ root
 - The pipeline keep the parsed output in memory (for subsequent processing) instead of saving the output to storage
 - There is no information on how a DICOM image should be matched with a contour file. I make a guess that for a patient, a __XYZ__.dcm DICOM image should be match with IM-0001-0__XYZ__-icontour-manual.txt contour file.
 
-<br/>
+
 #### 1. How did you verify that you are parsing the contours correctly?
 I verify that the contours are parsed correctly by:
 - writing unittest for parsing functions to ensure it has the intended output
@@ -31,7 +31,7 @@ There 96 matching DICOM-contour pairs. The generated outputs for these pairs are
 A sample output is shown below:<br/>
 <img src="assets/SCD0000101_68.dcm.png" alt="" width="50%"><br/>
 
-<br/>
+
 #### 2. What changes did you make to the code, if any, in order to integrate it into our production code base?
 I made the following changes to the code:
 - add in input validation for parsing functions, e.g check if file exists, check if a value can be parsed to float
@@ -67,12 +67,12 @@ I made the following changes to the code:
 I made the following chages to the pipelines built in Parts 1 to better streamline the pipeline built in Part 2:
 - I keep patient/image ID as part of parsed output. For model training and evaluation, we might need to perfom train/test split at patient level instead of at image level. So, we would need to have patient/image ID to perform the split.
 
-<br/>
+
 #### 2. How do you/did you verify that the pipeline was working correctly?
 - I added unittest for data_generator
 - I also looked at log to make sure the data generated in each epoch is as intended
 
-<br/>
+
 #### 3. Given the pipeline you have built, can you see any deficiencies that you would change if you had more time? If not, can you think of any improvements/enhancements to the pipeline that you could build in?
 I would consider adding the below improvements to the pipeline:
 - In case we have many observations to parse, I would use multithreadding to parse data
