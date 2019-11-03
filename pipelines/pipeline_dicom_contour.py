@@ -21,7 +21,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # Initiate logger
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(filename='pipeline_dicom_contour.log', filemode='w', level=logging.INFO)
     logger = logging.getLogger('pipeline_dicom_contour')
 
     # Intialize ImageData
@@ -38,6 +38,7 @@ if __name__ == '__main__':
 
     # Perform model training
     # TODO: set up model and the below code portion will be part of train() function of the model
+    logger.info('Start training ...')
     for epoch in range(args.nb_epoch):
         logger.info('Epoch {}:'.format(str(epoch)))
         data_gen = dataset.data_generator(datasource=image_data.dataset, batch_size=args.batch_size, shuffle=True,

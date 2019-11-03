@@ -88,6 +88,7 @@ class ImageData:
         """
 
         # map patient_id to corresponding original_id
+        self.logger.info('Reading link file at {} ...'.format(link_path))
         try:
             df_link = pd.read_csv(link_path)
             dict_link = dict(zip(df_link[LINK_DICOM_FIELD].values, df_link[LINK_CONTOUR_FIELD].values))
@@ -97,6 +98,7 @@ class ImageData:
             return []
 
         # find all matching dicom-contour pairs
+        self.logger.info('Mapping dicom and i-contour pairs...')
         dicomn_contour_pairs = []
         for patient_id in dict_link:
             img_path = os.path.join(dicoms_path, patient_id)
@@ -132,6 +134,7 @@ class ImageData:
             mask is ndarray that has the same shape as img_data and contains boolean mask of i-contour
         """
 
+        self.logger.info('Parsing dicom and i-contour pairs...')
         for (patient_id, dicom_file, contour_file) in self.dicomn_contour_pairs:
             try:
                 img_id = patient_id + DELIM + os.path.split(dicom_file)[-1]
@@ -150,6 +153,7 @@ class ImageData:
         :param output_path: str, folder path to store result
         """
 
+        self.logger.info('Visualizing dicom and i-contour pairs...')
         for (img_id, img_data, mask) in self.dataset:
             # normalize 16bit gray scale to 0-255
             img_data = img_data.astype('float') / np.max(img_data) * 255
