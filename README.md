@@ -39,7 +39,7 @@ I made the following changes to the code:
 * replace some hard-coded variables with global variables to avoid inconsistency
 * make changes to some strange logics:
 
-<br/>In _parse_dicom_file_ function, check if a key exist in dcm object instead of trying to run the code and catch exception:
+In _parse_dicom_file_ function, check if a key exist in dcm object instead of trying to run the code and catch exception:
 ```bash
     try:
         intercept = dcm.RescaleIntercept
@@ -50,13 +50,11 @@ I made the following changes to the code:
     except AttributeError:
         slope = 0.0
 ```
-
 <br/>In _parse_dicom_file_ function, the below logic might miss out required data transformation in cases where intercept or slope is actually zero
 ```python
     if intercept != 0.0 and slope != 0.0:
                 dcm_image = dcm_image*slope + intercept
 ```
-
 <br/>In _poly_to_mask_ function, it might be better to also draw the outline to avoid missing out pixels, although this probably does not affect the model result. I did not make this change.
 ```python
     ImageDraw.Draw(img).polygon(xy=polygon, outline=0, fill=1)
