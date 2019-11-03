@@ -86,6 +86,6 @@ I made the following chages to the pipelines built in Parts 1 to better streamli
 I would consider adding the below improvements to the pipeline:
 * In case we have many observations to parse, I would use multithreadding to parse data
 * In case the data is too large to store in memory, instead of parsing the whole dataset and keep it in memory, I can either:
-    - save the parsed data to storage and use a data generator to load data as needed in each training step/epoch
+    - separate the two pipelines: save the parsed data to storage in Part 1 and use a data generator to load data as needed in each training step/epoch in Part 2
     - (or) use a data generator to parse data as needed in each training step/epoch
 * Add integration test
