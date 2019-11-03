@@ -29,13 +29,16 @@ I verify that the contours are parsed correctly by:
 - saving the generated outputs of DICOM image data and contour binary mask side-by-side and visually comparing the outputs.
 There 96 matching DICOM-contour pairs. The generated outputs for these pairs are available at: https://drive.google.com/drive/folders/1Gq05iVeGwnDG3coyE3WQr1GccCZ0O8lX?usp=sharing
 
-A sample output is shown below:<br/>
+A sample output of image data and contour binary mask putting side-by-side is shown below:<br/>
 <img src="assets/SCD0000101_68.dcm.png" alt="" width="50%"><br/>
 
 
 #### 2. What changes did you make to the code, if any, in order to integrate it into our production code base?
 I made the following changes to the code:
 * add in input validation for parsing functions, e.g check if file exists, check if a value can be parsed to float
+* add unittests (although I do not have time to make it comprehensive)
+* use logger to log relevant information and error when running the pipeline for inspection.
+The log generated when the pipeline runs is available at: https://drive.google.com/file/d/1U88gh7pFC4K_tSQWyLK36rJA4EKH_dyu/view?usp=sharing
 * replace some hard-coded variables with global variables to avoid inconsistency
 * make changes to some strange logics:
 
@@ -59,10 +62,6 @@ In _parse_dicom_file_ function, check if a key exist in dcm object instead of tr
 ```python
     ImageDraw.Draw(img).polygon(xy=polygon, outline=0, fill=1)
 ```
-
-* add unittests (although I do not have time to make it comprehensive)
-* use logger to log relevant information and error when running the pipeline for inspection.
-The log generated when the pipeline runs is available at: https://drive.google.com/file/d/1U88gh7pFC4K_tSQWyLK36rJA4EKH_dyu/view?usp=sharing
 
  
 ## Part 2: Model training pipeline
