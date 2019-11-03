@@ -18,7 +18,7 @@ root
 
 ## Part 1: Parse the DICOM images and Contour Files
 #### Assumption
-- The pipeline only parse DICOM images and i-contour files that are matched together. Files that do not have corresponding DICOM/i-contour counterpart are probably not useful at the moment and will not be parsed.
+- The pipeline only parses DICOM images and i-contour files that are matched together. Files that do not have corresponding DICOM/i-contour counterpart are probably not useful at the moment and will not be parsed.
 - The pipeline keeps the parsed output in memory (for subsequent processing) instead of saving the output to storage
 - There is no information on how a DICOM image should be matched with a contour file. I make a guess that for a patient, a XYZ.dcm DICOM image should be match with IM-0001-0XYZ-icontour-manual.txt contour file.
 
@@ -42,7 +42,7 @@ The log generated when the pipeline runs is available at: https://drive.google.c
 * replace some hard-coded variables with global variables to avoid inconsistency
 * make changes to some strange logics:
 
-In _parse_dicom_file_ function, check if a key exists in dcm object instead of trying to run the code and catch exception:
+In _parse_dicom_file_ function, check if an attribute exists in dcm object instead of trying to run the code and catch exception:
 ```bash
     try:
         intercept = dcm.RescaleIntercept
@@ -75,7 +75,7 @@ In _parse_dicom_file_ function, check if a key exists in dcm object instead of t
 #### 1. Did you change anything from the pipelines built in Parts 1 to better streamline the pipeline built in Part 2? If so, what? If not, is there anything that you can imagine changing in the future?
 I made the following changes to the pipelines built in Parts 1 to better streamline the pipeline built in Part 2:
 * I keep patient/image ID as part of parsed output. For model training and evaluation, we might need to perform train/test split at patient level instead of at image level. So, we would need to have patient/image ID to perform the split.
-
+* If we find that other attributes in DCOM files (e.g. orientation) would be useful, I imagine that we would want to parse those information as well 
 
 #### 2. How do you/did you verify that the pipeline was working correctly?
 * I added unittest for data_generator
