@@ -27,7 +27,8 @@ root
 I verify that the contours are parsed correctly by:
 - writing unittest for parsing functions to ensure it has the intended output
 - saving the generated outputs of DICOM image data and contour binary mask side-by-side and visually comparing the outputs.
-There 96 matching DICOM-contour pairs. The generated outputs for these pairs are available here:
+There 96 matching DICOM-contour pairs. The generated outputs for these pairs are available at: https://drive.google.com/drive/folders/1Gq05iVeGwnDG3coyE3WQr1GccCZ0O8lX?usp=sharing
+
 A sample output is shown below:<br/>
 <img src="assets/SCD0000101_68.dcm.png" alt="" width="50%"><br/>
 
@@ -38,7 +39,7 @@ I made the following changes to the code:
 - replace some hard-coded variables with global variables to avoid inconsistency
 - perform minor refactoring to handle some strange logics:
 - [x]In _parse_dicom_file_ function, check if a key exist in dcm object instead of trying to run the code and catch exception:
-```python
+```bash
     try:
         intercept = dcm.RescaleIntercept
     except AttributeError:
@@ -60,7 +61,9 @@ I made the following changes to the code:
     ImageDraw.Draw(img).polygon(xy=polygon, outline=0, fill=1)
 ```
 - add unittests (alghough I do not have time to make it comprehensive)
-- use logger to log relevant information and error when running the pipeline
+- use logger to log relevant information and error when running the pipeline for inspection.
+The log generated when the pipeline runs is available at: https://drive.google.com/file/d/1U88gh7pFC4K_tSQWyLK36rJA4EKH_dyu/view?usp=sharing
+
  
 ## Part 2: Model training pipeline
 #### 1. Did you change anything from the pipelines built in Parts 1 to better streamline the pipeline built in Part 2? If so, what? If not, is there anything that you can imagine changing in the future?
