@@ -19,7 +19,7 @@ root
 ## Part 1: Parse the DICOM images and Contour Files
 #### Assumption
 - The pipeline only parse DICOM images and i-contour files that are matched together. Files that do not have corresponding DICOM/i-contour counterpart are probably not useful at the moment and will not be parsed.
-- The pipeline keep the parsed output in memory (for subsequent processing) instead of saving the output to storage
+- The pipeline keeps the parsed output in memory (for subsequent processing) instead of saving the output to storage
 - There is no information on how a DICOM image should be matched with a contour file. I make a guess that for a patient, a XYZ.dcm DICOM image should be match with IM-0001-0XYZ-icontour-manual.txt contour file.
 
 
@@ -73,8 +73,8 @@ In _parse_dicom_file_ function, check if a key exists in dcm object instead of t
  
 ## Part 2: Model training pipeline
 #### 1. Did you change anything from the pipelines built in Parts 1 to better streamline the pipeline built in Part 2? If so, what? If not, is there anything that you can imagine changing in the future?
-I made the following chages to the pipelines built in Parts 1 to better streamline the pipeline built in Part 2:
-* I keep patient/image ID as part of parsed output. For model training and evaluation, we might need to perfom train/test split at patient level instead of at image level. So, we would need to have patient/image ID to perform the split.
+I made the following changes to the pipelines built in Parts 1 to better streamline the pipeline built in Part 2:
+* I keep patient/image ID as part of parsed output. For model training and evaluation, we might need to perform train/test split at patient level instead of at image level. So, we would need to have patient/image ID to perform the split.
 
 
 #### 2. How do you/did you verify that the pipeline was working correctly?
@@ -84,7 +84,7 @@ I made the following chages to the pipelines built in Parts 1 to better streamli
 
 #### 3. Given the pipeline you have built, can you see any deficiencies that you would change if you had more time? If not, can you think of any improvements/enhancements to the pipeline that you could build in?
 I would consider adding the below improvements to the pipeline:
-* In case we have many observations to parse, I would use multithreadding to parse data
+* In case we have many observations to parse, I would use multi-threading to parse data
 * In case the data is too large to store in memory, instead of parsing the whole dataset and keep it in memory, I can either:
     - separate the two pipelines: save the parsed data to storage in Part 1 and use a data generator to load data as needed in each training step/epoch in Part 2
     - (or) use a data generator to parse data as needed in each training step/epoch
