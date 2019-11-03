@@ -76,6 +76,9 @@ In _parse_dicom_file_ function, check if an attribute exists in dcm object inste
 I made the following changes to the pipelines built in Parts 1 to better streamline the pipeline built in Part 2:
 * I keep patient/image ID as part of parsed output. For model training and evaluation, we might need to perform train/test split at patient level instead of at image level. So, we would need to have patient/image ID to perform the split.
 * If we find that other attributes in DCOM files (e.g. orientation) would be useful, I imagine that we would want to parse those information as well 
+* We might want to perform image augmentation for model training. In that case, I imagine that we can either:
+  - Add image augmentation code to the pipeline before the model training
+  - (Or) Add image augmentation code to data generator to perform augmentation as we generate data for training
 
 #### 2. How do you/did you verify that the pipeline was working correctly?
 * I added unittest for data_generator
