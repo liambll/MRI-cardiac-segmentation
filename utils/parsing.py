@@ -1,10 +1,17 @@
 """Parsing code for DICOMS and contour files"""
 
+import os
 import pydicom
 from pydicom.errors import InvalidDicomError
 
 import numpy as np
 from PIL import Image, ImageDraw
+
+
+# global variable:
+INTERCEPT_FIELD = 'RescaleIntercept'
+SLOPE_FIELD = 'RescaleSlope'
+PIXEL_FIELD = 'pixel_data'
 
 
 def parse_contour_file(filename):
@@ -14,8 +21,10 @@ def parse_contour_file(filename):
     :return: list of tuples holding x, y coordinates of the contour
     """
 
+    if not os.path.isfile(filename):
+        raise ValueError(filename + ' does not exist.')
+        
     coords_lst = []
-
     with open(filename, 'r') as infile:
         for line in infile:
             coords = line.strip().split()
@@ -27,32 +36,27 @@ def parse_contour_file(filename):
     return coords_lst
 
 
-def parse_dicom_file(filename, pixel_field='pixel_data'):
+def parse_dicom_file(filename):
     """Parse the given DICOM filename
 
     :param filename: filepath to the DICOM file to parse
     :return: dictionary with DICOM image data
     """
 
+    if not os.path.isfile(filename):
+        raise ValueError(filename + ' does not exist.')
+        
     try:
         dcm = pydicom.read_file(filename)
-        dcm_image = dcm.pixel_array
-
-        try:
-            intercept = dcm.RescaleIntercept
-        except AttributeError:
-            intercept = 0.0
-        try:
-            slope = dcm.RescaleSlope
-        except AttributeError:
-            slope = 0.0
-
-        if intercept != 0.0 and slope != 0.0:
-            dcm_image = dcm_image*slope + intercept
-        dcm_dict = {pixel_field : dcm_image}
-        return dcm_dict
     except InvalidDicomError:
-        return None
+        raise ValueError(filename + ' is not a valid DCOM file.')
+    
+    dcm_image = dcm.pixel_array
+    if INTERCEPT_FIELD in dcm and SLOPE_FIELD in dcm:
+        dcm_image = dcm_image*dcm.SLOPE_FIELD + dcm.INTERCEPT_FIELD
+    dcm_dict = {PIXEL_FIELD: dcm_image}
+    return dcm_dict
+
 
 
 def poly_to_mask(polygon, width, height):
@@ -65,7 +69,7 @@ def poly_to_mask(polygon, width, height):
     :return: Boolean mask of shape (height, width)
     """
 
-    # http://stackoverflow.com/a/3732128/1410871
+    # Reference http://stackoverflow.com/a/3732128/1410871
     img = Image.new(mode='L', size=(width, height), color=0)
     ImageDraw.Draw(img).polygon(xy=polygon, outline=0, fill=1)
     mask = np.array(img).astype(bool)
