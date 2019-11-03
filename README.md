@@ -42,7 +42,7 @@ The log generated when the pipeline runs is available at: https://drive.google.c
 * replace some hard-coded variables with global variables to avoid inconsistency
 * make changes to some strange logics:
 
-In _parse_dicom_file_ function, check if a key exist in dcm object instead of trying to run the code and catch exception:
+In _parse_dicom_file_ function, check if a key exists in dcm object instead of trying to run the code and catch exception:
 ```bash
     try:
         intercept = dcm.RescaleIntercept
@@ -56,9 +56,16 @@ In _parse_dicom_file_ function, check if a key exist in dcm object instead of tr
 <br/>In _parse_dicom_file_ function, the below logic might miss out required data transformation in cases where intercept or slope is actually zero
 ```python
     if intercept != 0.0 and slope != 0.0:
-                dcm_image = dcm_image*slope + intercept
+        dcm_image = dcm_image*slope + intercept
 ```
-<br/>In _poly_to_mask_ function, it might be better to also draw the outline to avoid missing out pixels, although this probably does not affect the model result. I did not make this change.
+
+<br/>In _parse_dicom_file_ function, it is strange that pixel data is stored in a dict instead of being returned directly. I suppose we might want to add in attributes other than pixel data later, so I did not make any change here.
+```python
+    dcm_dict = {PIXEL_FIELD: dcm_image}
+    return dcm_dict
+```     
+
+<br/>In _poly_to_mask_ function, it might be better to also draw the outline to avoid missing out pixels, although this probably does not affect the model result. I did not make this change
 ```python
     ImageDraw.Draw(img).polygon(xy=polygon, outline=0, fill=1)
 ```
@@ -72,7 +79,7 @@ I made the following chages to the pipelines built in Parts 1 to better streamli
 
 #### 2. How do you/did you verify that the pipeline was working correctly?
 * I added unittest for data_generator
-* I also looked at log to inspect if the data index generated in each epoch is as intended
+* I also looked at the log to inspect if the data index generated in each epoch is as intended
 
 
 #### 3. Given the pipeline you have built, can you see any deficiencies that you would change if you had more time? If not, can you think of any improvements/enhancements to the pipeline that you could build in?
