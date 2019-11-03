@@ -16,7 +16,7 @@ import logging
 
 # global variables for dicoms and contours folders
 LINK_DICOM_FIELD = 'patient_id'
-LINK_CONTOUR_FIED = 'original_id'
+LINK_CONTOUR_FIELD = 'original_id'
 ICONTOUR_SUBFOLDER = 'i-contours'
 ICONTOUR_FILENAME_FORMAT = 'IM-0001-{:04d}-icontour-manual.txt'
 DELIM = '_'
@@ -47,13 +47,14 @@ class ImageData:
                 |         |-----2.dcm    
                 |         ...
                 ...     
-        :param link_path: str, filepath to csv file that contains LINK_DICOM_FIELD and LINK_CONTOUR_FIED columns.
+        :param link_path: str, filepath to csv file that contains LINK_DICOM_FIELD and LINK_CONTOUR_FIELD columns.
                 Each row in the csv file map a patient_id to original_id
         :param logger: Logger object
         """
 
         if logger is None:
-            self.logger = logging.getLogger('pipeline_parse_files')
+            logging.basicConfig(level=logging.INFO)
+            self.logger = logging.getLogger('dataset')
         else:
             self.logger = logger
         self.dicomn_contour_pairs = self.map_dicom_contour(dicoms_path, contours_path, link_path)
@@ -84,17 +85,18 @@ class ImageData:
                 |         |-----2.dcm    
                 |         ...
                 ...     
-        :param link_path: str, filepath to csv file that contains LINK_DICOM_FIELD and LINK_CONTOUR_FIED columns.
+        :param link_path: str, filepath to csv file that contains LINK_DICOM_FIELD and LINK_CONTOUR_FIELD columns.
                 Each row in the csv file map a patient_id to original_id
         """
         
         # map patient_id to corresponding original_id
         try:
             df_link = pd.read_csv(link_path)
-            dict_link = dict(zip(df_link[LINK_DICOM_FIELD].values, df_link[LINK_CONTOUR_FIED].values))
+            dict_link = dict(zip(df_link[LINK_DICOM_FIELD].values, df_link[LINK_CONTOUR_FIELD].values))
         except Exception:
             error_txt = traceback.format_exc()
-            self.logger.error('Error reading link file %s. Trace back\n %s'.format(link_path, error_txt))
+            self.logger.error('Error reading link file {}. Trace back\n{}'.format(link_path, error_txt))
+            return []
         
         # find all matching dicom-contour pairs
         dicomn_contour_pairs = []
@@ -109,7 +111,7 @@ class ImageData:
                     try:
                         img_number = int(img_number)
                     except ValueError:
-                        self.logger.info('Patient %s: dicom filename %s does not match expected format.'\
+                        self.logger.info('Patient {}: dicom filename {} does not match expected format.'\
                                     .format(patient_id, img_file_name))
                         
                     contour_filename = ICONTOUR_FILENAME_FORMAT.format(int(img_number)) # find matching contour file
@@ -117,10 +119,10 @@ class ImageData:
                     if os.path.isfile(contour_file):
                         dicomn_contour_pairs.append((patient_id, img_file, contour_file))
                     else:
-                        self.logger.info('Patient %s: i-contour_file for %s is missing.'.format(patient_id, img_file_name))
+                        self.logger.info('Patient {}: i-contour_file for {} is missing.'.format(patient_id, img_file_name))
             else:
-                self.logger.info('%s or %s is missing.'.format(patient_id, dict_link[patient_id]))
-        self.logger.info('Finish matching dicom files to i-contour files.')
+                self.logger.info('{} or {} is missing.'.format(patient_id, dict_link[patient_id]))
+        self.logger.info('Found {} matching dicom and i-contour pairs.'.format(str(len(dicomn_contour_pairs))))
                 
         return dicomn_contour_pairs
 
@@ -141,7 +143,9 @@ class ImageData:
                 self.dataset.append((img_id, img_data, mask))
             except Exception:
                 error_txt = traceback.format_exc()
-                self.logger.error('Error parsing (%s, %s). Trace back\n %s'.format(dicom_file, contour_file, error_txt))
+                self.logger.error('Error parsing ({}, {}). Trace back\n {}'.format(dicom_file, contour_file, error_txt))
+                
+        self.logger.info('Parsed {} dicom and i-contour pairs.'.format(str(len(self.dataset))))
 
 
     def visualize_result(self, output_path):
@@ -161,3 +165,5 @@ class ImageData:
             im = Image.fromarray(result, 'L')
             output_filepath = os.path.join(output_path, img_id + '.png')
             im.save(output_filepath)
+            
+        self.logger.info('Visualization result saved to {}.'.format(output_path))
