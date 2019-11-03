@@ -53,6 +53,32 @@ class TestParsing(unittest.TestCase):
         os.remove(temp_file)
 
         np.testing.assert_equal(im_data, {parsing.PIXEL_FIELD: pixel_array})
+        
+    def test_parse_dicom_file_with_intercept_scope(self):
+        # create a temporary dicom file
+        temp_dir = tempfile.gettempdir()  # get temp directory
+        temp_file = os.path.join(temp_dir, 'dicom.dcm')
+
+        # Reference https://stackoverflow.com/questions/14350675/create-pydicom-file-from-numpy-array
+        pixel_array = np.diag([1, 2, 3]).astype(np.uint16)  # create a diagonal matrix
+        file_meta = Dataset()
+        ds = FileDataset(temp_file, {}, file_meta=file_meta, preamble=b'\x00' * 128)
+        file_meta.TransferSyntaxUID = uid.ImplicitVRLittleEndian
+        ds.BitsAllocated = 16
+        ds.SamplesPerPixel = 1
+        ds.Columns = pixel_array.shape[0]
+        ds.Rows = pixel_array.shape[1]
+        ds.PixelRepresentation = 0
+        ds.RescaleIntercept = 0.0
+        ds.RescaleSlope = 0.5
+        ds.PixelData = pixel_array.tostring()
+        ds.save_as(temp_file)
+
+        # parse file
+        im_data = parsing.parse_dicom_file(temp_file)
+        os.remove(temp_file)
+
+        np.testing.assert_equal(im_data, {parsing.PIXEL_FIELD: ds.RescaleIntercept + pixel_array*ds.RescaleSlope})
 
     def test_poly_to_mask(self):
         # create input

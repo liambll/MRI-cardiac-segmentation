@@ -54,8 +54,8 @@ def parse_dicom_file(filename):
     dcm_image = dcm.pixel_array
     if INTERCEPT_FIELD in dcm and SLOPE_FIELD in dcm:
         try:
-            slope = float(dcm.SLOPE_FIELD)
-            intercept = float(dcm.INTERCEPT_FIELD)
+            slope = float(dcm.RescaleSlope)
+            intercept = float(dcm.RescaleIntercept)
         except ValueError:
             raise ValueError('Intercept or slope is not numeric.')
         dcm_image = dcm_image * slope + intercept
