@@ -182,7 +182,7 @@ def data_generator(datasource, batch_size=1, shuffle=True):
         batch_img = []
         batch_mask = []
         for b in range(batch_size):
-            (_, img_data, mask) = datasource[i]
+            (_, img_data, mask) = datasource[index_list[i]]
             batch_img.append(img_data)
             batch_mask.append(mask)
 
