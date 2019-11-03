@@ -3,7 +3,6 @@
 import os
 import pydicom
 from pydicom.errors import InvalidDicomError
-
 import numpy as np
 from PIL import Image, ImageDraw
 
@@ -23,7 +22,7 @@ def parse_contour_file(filename):
 
     if not os.path.isfile(filename):
         raise ValueError(filename + ' does not exist.')
-        
+
     coords_lst = []
     with open(filename, 'r') as infile:
         for line in infile:
@@ -46,12 +45,12 @@ def parse_dicom_file(filename):
 
     if not os.path.isfile(filename):
         raise ValueError(filename + ' does not exist.')
-        
+
     try:
         dcm = pydicom.read_file(filename)
     except InvalidDicomError:
         raise ValueError(filename + ' is not a valid DCOM file.')
-    
+
     dcm_image = dcm.pixel_array
     if INTERCEPT_FIELD in dcm and SLOPE_FIELD in dcm:
         try:
@@ -59,8 +58,8 @@ def parse_dicom_file(filename):
             intercept = float(dcm.INTERCEPT_FIELD)
         except ValueError:
             raise ValueError('Intercept or slope is not numeric.')
-        dcm_image = dcm_image*slope + intercept
-        
+        dcm_image = dcm_image * slope + intercept
+
     dcm_dict = {PIXEL_FIELD: dcm_image}
     return dcm_dict
 
