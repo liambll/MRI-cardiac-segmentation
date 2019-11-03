@@ -16,7 +16,7 @@ if __name__ == '__main__':
     parser.add_argument('contours_path', help='A folderpath for contour images')
     parser.add_argument('link_path', help='A filepath to csv that link dicom and contour')
     parser.add_argument('--output_path', help='A folderpath to store visualization result')
-    parser.add_argument('--nb_epoch', type=int, default=40, help='Number of epoch to train model')
+    parser.add_argument('--nb_epoch', type=int, default=5, help='Number of epoch to train model')
     parser.add_argument('--batch_size', type=int, default=8, help='Number of observation in each batch')
     args = parser.parse_args()
 
@@ -40,7 +40,8 @@ if __name__ == '__main__':
     # TODO: set up model and the below code portion will be part of train() function of the model
     for epoch in range(args.nb_epoch):
         logger.info('Epoch {}:'.format(str(epoch)))
-        data_gen = dataset.data_generator(datasource=image_data.dataset, batch_size=args.batch_size, shuffle=True)
+        data_gen = dataset.data_generator(datasource=image_data.dataset, batch_size=args.batch_size, shuffle=True,
+                                          logger=logger)
         nb_steps = len(image_data.dataset) // args.batch_size
         for step in range(nb_steps):
             batch_img, batch_mask = data_gen.__next__()

@@ -166,11 +166,12 @@ class ImageData:
         self.logger.info('Visualization result saved to {}.'.format(output_path))
 
 
-def data_generator(datasource, batch_size=1, shuffle=True):
+def data_generator(datasource, batch_size=1, shuffle=True, logger=None):
     """A generator that returns img_data and corresponding mask.
     :param datasource:list of tuples (img_id, img_data, mask)
     :param batch_size: int, number of observations to load in each batch
     :param shuffle: boolean, whether to shuffle the data at the begining of each epoch
+    :param logger: logger object
     """
 
     i = 0
@@ -179,10 +180,12 @@ def data_generator(datasource, batch_size=1, shuffle=True):
         np.random.shuffle(index_list)
 
     while True:  # loop over the datasource indefinitely
+        batch_img_id = []
         batch_img = []
         batch_mask = []
         for b in range(batch_size):
-            (_, img_data, mask) = datasource[index_list[i]]
+            (img_id, img_data, mask) = datasource[index_list[i]]
+            batch_img_id.append(img_id)
             batch_img.append(img_data)
             batch_mask.append(mask)
 
@@ -192,5 +195,8 @@ def data_generator(datasource, batch_size=1, shuffle=True):
 
         batch_img = np.array(batch_img)
         batch_mask = np.array(batch_mask)
+        
+        if logger is not None:
+            logger.info('Fetching data for {}.'.format(str(batch_img_id)))
 
         yield (batch_img, batch_mask)
