@@ -2,13 +2,13 @@
 The project aims to parse DICOM and corresponding Contour files and prepare a dataset for machine learning model training.
 
 Relevant code files:
-```python
+```
 root
  |---pipelines
- |     |------pipeline_dicom_contour.py: This is the main pipeline that create ImageData object to perform the parsing and prepare dataset
+ |     |------pipeline_dicom_contour.py: This is the main pipeline that perform the parsing and prepare dataset
  |---utils
  |     |---parsing.py: contains provided file/data parsing functions
- |     |---dataset.py: contains ImageData class (for parsing) and data_geneartor (for generating data for training epoch)
+ |     |---dataset.py: contains ImageData class (for parsing) and data_geneartor (for iterating through data)
  |---tests
        |---unit
             |---utils
@@ -28,7 +28,6 @@ I verify that the contours are parsed correctly by:
 - writing unittest for parsing functions to ensure it has the intended output
 - saving the generated outputs of DICOM image data and contour binary mask side-by-side and visually comparing the outputs.
 There 96 matching DICOM-contour pairs. The generated outputs for these pairs are available at: https://drive.google.com/drive/folders/1Gq05iVeGwnDG3coyE3WQr1GccCZ0O8lX?usp=sharing
-
 A sample output is shown below:<br/>
 <img src="assets/SCD0000101_68.dcm.png" alt="" width="50%"><br/>
 
@@ -38,7 +37,7 @@ I made the following changes to the code:
 - add in input validation for parsing functions, e.g check if file exists, check if a value can be parsed to float
 - replace some hard-coded variables with global variables to avoid inconsistency
 - perform minor refactoring to handle some strange logics:
-- [x]In _parse_dicom_file_ function, check if a key exist in dcm object instead of trying to run the code and catch exception:
+  [x]In _parse_dicom_file_ function, check if a key exist in dcm object instead of trying to run the code and catch exception:
 ```bash
     try:
         intercept = dcm.RescaleIntercept
@@ -50,13 +49,13 @@ I made the following changes to the code:
         slope = 0.0
 ```
   
-- [x]In _parse_dicom_file_ function, the below logic might miss out required data transformation in cases where intercept or slope is actually zero
+  [x] In _parse_dicom_file_ function, the below logic might miss out required data transformation in cases where intercept or slope is actually zero
 ```python
     if intercept != 0.0 and slope != 0.0:
                 dcm_image = dcm_image*slope + intercept
 ```  
 
-- [ ]In _poly_to_mask_ function, it might be better to also draw the outline to avoid missing out pixels, altough this probably does not affect the model result. I did not make this change.
+  [ ] In _poly_to_mask_ function, it might be better to also draw the outline to avoid missing out pixels, altough this probably does not affect the model result. I did not make this change.
 ```python
     ImageDraw.Draw(img).polygon(xy=polygon, outline=0, fill=1)
 ```
