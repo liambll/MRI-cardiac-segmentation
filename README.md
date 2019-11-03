@@ -35,7 +35,7 @@ A sample output of image data and contour binary mask putting side-by-side is sh
 
 #### 2. What changes did you make to the code, if any, in order to integrate it into our production code base?
 I made the following changes to the code:
-* add in input validation for parsing functions, e.g check if file exists, check if a value can be parsed to float
+* add some validation in parsing functions, e.g check if file exists, check if a value can be parsed to float
 * add unittests (although I do not have time to make it comprehensive)
 * use logger to log relevant information and error when running the pipeline for inspection.
 The log generated when the pipeline runs is available at: https://drive.google.com/file/d/1U88gh7pFC4K_tSQWyLK36rJA4EKH_dyu/view?usp=sharing
