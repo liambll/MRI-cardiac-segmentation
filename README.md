@@ -91,4 +91,4 @@ I would consider adding the below improvements to the pipeline:
 * In case the data is too large to store in memory, instead of parsing the whole dataset and keep it in memory, I can either:
     - separate the two pipelines: save the parsed data to storage in Part 1 and use a data generator to load data as needed in each training step/epoch in Part 2
     - (or) use a data generator to parse data as needed in each training step/epoch
-* Add more tests
+* Add more tests and input validations
