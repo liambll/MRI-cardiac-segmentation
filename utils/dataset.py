@@ -176,8 +176,11 @@ def data_generator(datasource, batch_size=1, shuffle=True, logger=None):
     :param datasource:list of tuples (img_id, img_data, mask)
     :param batch_size: int, number of observations to load in each batch
     :param shuffle: boolean, whether to shuffle the data at the begining of each epoch
-    :param logger: logger object
+    :param logger: logger object, for debug purpose
     """
+
+    if len(datasource) == 0:
+        raise ValueError('Datasource is empty.')
 
     i = 0
     index_list = np.arange(len(datasource))

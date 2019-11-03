@@ -37,15 +37,18 @@ if __name__ == '__main__':
         image_data.visualize_result(args.output_path)
 
     # Perform model training
-    # TODO: set up model and the below code portion will be part of train() function of the model
-    logger.info('Start training ...')
-    for epoch in range(args.nb_epoch):
-        logger.info('Epoch {}:'.format(str(epoch)))
-        data_gen = dataset.data_generator(datasource=image_data.dataset, batch_size=args.batch_size, shuffle=True,
-                                          logger=logger)
-        nb_steps = len(image_data.dataset) // args.batch_size
-        for step in range(nb_steps):
-            batch_img, batch_mask = data_gen.__next__()
-            # TODO: train step
-
-        # TODO: val step
+    if len(image_data.dataset) > 0:
+        # TODO: set up model and the below code portion will be part of train() function of the model
+        logger.info('Start training ...')
+        for epoch in range(args.nb_epoch):
+            logger.info('Epoch {}:'.format(str(epoch)))
+            data_gen = dataset.data_generator(datasource=image_data.dataset, batch_size=args.batch_size, shuffle=True,
+                                              logger=logger)
+            nb_steps = len(image_data.dataset) // args.batch_size
+            for step in range(nb_steps):
+                batch_img, batch_mask = data_gen.__next__()
+                # TODO: train step
+    
+            # TODO: val step
+    else:
+        logger.info('There is no data for training.')
