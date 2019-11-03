@@ -79,7 +79,7 @@ I made the following chages to the pipelines built in Parts 1 to better streamli
 
 #### 2. How do you/did you verify that the pipeline was working correctly?
 * I added unittest for data_generator
-* I also looked at the log to inspect if the data index generated in each epoch is as intended
+* I also looked at the log to inspect (or even assert) that the data shape and index generated in each epoch are as expected
 
 
 #### 3. Given the pipeline you have built, can you see any deficiencies that you would change if you had more time? If not, can you think of any improvements/enhancements to the pipeline that you could build in?
