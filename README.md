@@ -127,7 +127,7 @@ There are 46 images with matching i-contour and o-contour files. By examining th
 <img src="assets/pixel_intensity.png" alt="" width="80%"><br/>
 
 Each boxplot shows minimum, first quartile, median, third quartile, and max values of pixel intensity in an image. A good threshold should separate majority of blood pool pixel intensity from majority of heart muscle pixel intensity.
-<br/>From the boxplot, we see that pixel intensity's interquartile range of blood pool in one image can overlap with that of heart muscle in other images. That means, we would not be able to find a specific threshold that would work well across different images. Therefore, we cannot use simple thresholding scheme in this case.
+<br/>From the boxplot, we see that pixel intensity's interquartile range of blood pool in one image can overlap with that of heart muscle in other images. That means, we would not be able to find a gloabl threshold that would work well across different images. Therefore, we cannot use simple thresholding scheme in this case.
 
 * I try to generate boxplot for normalized pixel intensity (i.e. pixel intensity normalized to 0-255 range for each image):<br/>
 <img src="assets/pixel_intensity_normalized.png" alt="" width="80%"><br/>
@@ -137,7 +137,7 @@ We still see that pixel intensity's interquartile range of blood pool in one ima
 #### 2. Do you think that any other heuristic (non-machine learning)-based approaches, besides simple thresholding, would work in this case? Explain.
 Although pixel intensity's interquartile range (i.e majority) of blood pool in one image can overlap with that of heart muscle in other images, pixel intensity's interquartile range of blood pool and hear muscle in the same image rarely overlap. That means adaptive heuristic-based approaches for individual image would potential work.
 I can think of several heuristic-based approaches:
-* __Adaptive and Otsu thresholding__: Find an optimal threshold to separate pixel intensity in an image into 2 classes.
+* __Adaptive and Otsu thresholding__: Find an optimal local threshold to separate pixel intensities in an image into 2 classes.
 * __Edge detection__: Apply edge detection filters to find edges inside o-contours. Those edges are likely to correspond to boundaries of blood pool
 * Images of each person seems to correspond to a time-series. Perhaps, __object tracking__ approach might work if we manually annotate i-contour of the 1st image for each patient.
 
@@ -172,7 +172,7 @@ The difference between U-Net and Mask R-CNN lies in their convolution architectu
 * U-Net has a series of convolution/MaxPooling for representation learning, then transposed convolution (and skip connection) to predict the i-contour mask.
 * Mask-RCNN has a region proposal network to proposal region of interests, then perform fine-tuning and segmentation on the regions to predict one or more i-contour masks.
 
-If we want to find multiple i-contours that might overlap each other in an image, Mask R-CNN would be appropriate. In this challenge, we only expect one i-contour per image, so U-Net would be more appropriate and faster to train.
+If we want to find multiple objects that might overlap each other in an image, Mask R-CNN would be appropriate. In this challenge, we only expect one i-contour per image, so U-Net would be more appropriate and faster to train.
 
 __U-Net Prototype__
 
@@ -200,6 +200,6 @@ Advantages of the deep learning approach (e.g. U-Net) compared to heuristic-base
 Disadvantages of the deep learning approach (e.g. U-Net) compared to heuristic-based method (e.g. Otsu Thresholding):
 * Deep learning is considered a 'black box' approach and less interpretable.
 * Deep learning approach requires annotated mask of i-contour to train.
-* It is prone to overfitting and difficult to find global optima if we don't have a large and respresentative dataset, although we can use transfer learning to mitigate this challenge. It is usually more computationally intensive.
+* It is usually more computationally intensive. It is also prone to overfitting and difficult to find global optima if we don't have a large and respresentative dataset, although we can use transfer learning to mitigate this challenge.
 * Convolution operation is not invariant to scale and rotation. We usually need to perform data augmentation when training convolutional neural networks to mitigate this challenge.
 
