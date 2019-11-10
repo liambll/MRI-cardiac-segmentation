@@ -36,7 +36,7 @@ def save_images(img_list, save_path, normalize=True):
 
     # save result
     cv2.imwrite(save_path, result)
-#    
+    
     
 def overlay_images(background, masks, colors):
     """Draw boundary of masks on img

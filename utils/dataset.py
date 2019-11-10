@@ -23,7 +23,8 @@ DELIM = '_'
 
 
 class ImageData:
-    def __init__(self, dicoms_path, contours_path, link_path, logger=None):
+    def __init__(self, dicoms_path, contours_path, link_path, logger=None,
+                 parse_icontour=True, parse_ocontour=True):
         """
         :param dicoms_path: str, folderpath contains patients' image. dicoms_path should have the below structure:
             dicoms_path
@@ -50,6 +51,8 @@ class ImageData:
         :param link_path: str, filepath to csv file that contains LINK_DICOM_FIELD and LINK_CONTOUR_FIELD columns.
                 Each row in the csv file map a patient_id to original_id
         :param logger: Logger object
+        :param parse_icontour: bool, whether to parse corresponding icontour file
+        :param parse_ocontour: bool, whether to parse corresponding ocontour file
         """
 
         if logger is None:
@@ -59,7 +62,7 @@ class ImageData:
             self.logger = logger
         self.dicomn_contour_pairs = []
         self.dataset = []
-        self.map_dicom_contour(dicoms_path, contours_path, link_path)
+        self.map_dicom_contour(dicoms_path, contours_path, link_path, parse_icontour, parse_ocontour)
         
     def map_dicom_contour(self, dicoms_path, contours_path, link_path,
                           parse_icontour=True, parse_ocontour=True):
