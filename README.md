@@ -6,12 +6,15 @@ Relevant code files:
 root
  |---pipelines
  |     |------pipeline_dicom_contour.py: This is the main pipeline that perform the parsing and prepare dataset
- |     |------dicom_contour_analysis.py: This is the main analysis for data visualization and simple image processing (new code for Phase 2)
+ |     |------dicom_contour_analysis.py: This is the main analysis for data visualization and image thresholding (new code for Phase 2)
+ |     |------dicom_contour_cnn_model.py: This is the main pipeline for U-net model training (new code for Phase 2)
  |---utils
  |     |---parsing.py: contains provided file/data parsing functions
  |     |---dataset.py: contains ImageData class (for parsing) and data_geneartor (for iterating through data)
  |     |---image_processing.py: contains functions to create, transform and save images (new code for Phase 2)
  |     |---metrics.py: contains evaluation metric functions for segmentation task (new code for Phase 2)
+ |---models
+ |     |---u_net.py: contains U-Net model class (new code for Phase 2)
  |---tests
        |---unit
             |---utils
