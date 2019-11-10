@@ -111,7 +111,7 @@ I made the following changes to the pipelines built in Phase 1:
 An example of the updated visualization output is shown below (Red indicates i-contour or blood pool, Blue indicates o-contour or heart muscle):<br/>
 <img src="assets/SCD0000101_59.dcm.png" alt="" width="25%"><br/>
 
-By examining the visualization outputs, I notice that o-contour files of images from patient SCD0000501 seem to be incorrect. These images are excluded from analysis in part 2 (until we vertify the correctness of these contour files).<br/>
+There are 46 images with matching i-contour and o-contour files. By examining the visualization outputs, I notice that o-contour files of images from patient SCD0000501 seem to be incorrect. These images are excluded from analysis in part 2 (until we vertify the correctness of these contour files).<br/>
 <img src="assets/SCD0000501_219.dcm.png" alt="" width="25%"><br/>
 
 ## Part2: Heuristic LV Segmentation approaches
@@ -142,7 +142,7 @@ The initial output of these approaches might be "noisy", so we can perform post-
 * Each image should probably have only one blood pool area inside o-contour. So, we can apply opening operation and/or contour analysis to remove noise and select the largest contour to be the blood pool segmentation.
 * Since boundaries of blood pool seem to be smooth, we can apply convex hull or curve interpolation to make the segmentation more smooth.
 
-I implemented a quick prototype with Otsu thresholding approach and convex hull postprocessing. The segmentation result is available at: https://drive.google.com/open?id=12nfiO3uest38Im7x-Ft4bb6GveFfDIF4
+I implemented a quick prototype to evaluate the feasibility of using Otsu thresholding approach and convex hull postprocessing. The segmentation result is available at: https://drive.google.com/open?id=12nfiO3uest38Im7x-Ft4bb6GveFfDIF4
 
 A sample output is shown below (Red indicates annotated i-contour, Yellow indicates predicted i-contour):<br/>
 Left - Otsu thresholding, Right - Otsu thresolding with convex hull post processing.<br/>
@@ -152,7 +152,7 @@ To evaluate the segmentation result quantitatively, I look at Intersection over 
 
 | Approach  | Mean (Std) of IoU Score | Mean (Std) of Dice Score |
 | ------ | -------- | -------- |
-| Otsu threshol | 0.769 (0.096) | 0.865 (0.068) |
+| Otsu threshold | 0.769 (0.096) | 0.865 (0.068) |
 | Otsu threshold + Convex Hull | 0.827 (0.099) | 0.901 (0.071) |
 
 
@@ -169,6 +169,14 @@ The difference between U-Net and Mask R-CNN lies in their convolution architectu
 
 If we want to find multiple i-contours that might overlap each other in an image, Mask R-CNN would be appropriate. In this case, we only expect one i-contour per image, so U-Net would be more appropriate.
 
+I implemented a quick prototype to evaluate the feasibility of using U-Net for i-contour segmentation without o-segmentation. There are 5 patients with 96 matching image-icontour files. For this prototype, I simply train the U-Net model on the first 3 patients, and validate the model on the remaining 2 patients. The best model weight and segmentation result (without any postprocessing) is available at: https://drive.google.com/drive/folders/1PjrCZzGC2nGci1Fg7VZrbBY4v69ppa6G?usp=sharing
+
+| Dataset  | Mean (Std) of IoU Score | Mean (Std) of Dice Score |
+| ------ | -------- | -------- |
+| Train set | 0.911 (0.068) | 0.952 (0.041) |
+| Validation set | 0.838 (0.097) | 0.908 (0.066) |
+
+Further model tuning and post-processing will likely improve the i-contour mask prediction.
 
 #### 4. What are some advantages and disadvantages of the deep learning approach compared your chosen heuristic method?
 Advantages of the deep learning approach (e.g. U-Net) compared to heuristic-based method (e.g. Otsu Thresholding):
