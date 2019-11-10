@@ -79,15 +79,6 @@ def k_dice_score(y_true, y_pred, threshold=0.5):
     return K.mean(dice)
 
 
-# def dice_loss(y_true, y_pred):
-#    smooth = 1.
-#    y_true_f = K.batch_flatten(y_true)
-#    y_pred_f = K.batch_flatten(y_pred)
-#    intersection = y_true_f * y_pred_f
-#    score = (2. * K.sum(intersection) + smooth) / (K.sum(y_true_f) + K.sum(y_pred_f) + smooth)
-#    return K.mean(1. - score)
-
-
 def dice_loss(y_true, y_pred, smooth=1.):
     """Calculate Dice loss as Keras loss
     :param y_true: list of true label
