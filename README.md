@@ -1,21 +1,27 @@
-## Overview
-The project aims to parse DICOM and corresponding Contour files and prepare a dataset for machine learning model training.
+# Overview
+The project aims to parse DICOM and corresponding Contour files and identify i-contour .
 
 Relevant code files:
 ```
 root
  |---pipelines
  |     |------pipeline_dicom_contour.py: This is the main pipeline that perform the parsing and prepare dataset
+ |     |------dicom_contour_analysis.py: This is the main analysis for data visualization and simple image processing (new code for Phase 2)
  |---utils
  |     |---parsing.py: contains provided file/data parsing functions
  |     |---dataset.py: contains ImageData class (for parsing) and data_geneartor (for iterating through data)
+ |     |---image_processing.py: contains functions to create, transform and save images (new code for Phase 2)
+ |     |---metrics.py: contains evaluation metric functions for segmentation task (new code for Phase 2)
  |---tests
        |---unit
             |---utils
                  |----test_parsing.py: contains unittest for utils/parsing.py
                  |----test_dataset.py: contains unittest for utils/dataset.py
+                 |----test_image_processing.py: contains unittest for utils/image_processing.py (new code for Phase 2)
+                 |----test_metrics.py: contains unittest for utils/metrics.py (new code for Phase 2)
 ```
 
+# PHASE 1: DATA PROCESSING
 ## Part 1: Parse the DICOM images and Contour Files
 #### Assumption
 - The pipeline only parses DICOM images and i-contour files that are matched together. Files that do not have corresponding DICOM/i-contour counterpart are probably not useful at the moment and will not be parsed.
@@ -92,3 +98,81 @@ I would consider adding the below improvements to the pipeline:
     - separate the two pipelines: save the parsed data to storage in Part 1 and use a data generator to load data as needed in each training step/epoch in Part 2
     - (or) use a data generator to parse data as needed in each training step/epoch
 * Add more tests and input validations
+
+
+# PHASE 2: DATA SCIENCE/ANALYSIS
+## Part 1: Parse the o-contours
+#### 1. After building the pipeline, please discuss any changes that you made to the pipeline you built in Phase 1, and why you made those changes.
+I made the following changes to the pipelines built in Phase 1:
+- I add to _ImageData_ class parameters to specify whether the pipeline parses only i-contour, only o-contour or both (default), so that we can parse different folders depending on the data we want to analyze. If both i-contour and o-contour are needed, the pipeline parses DICOM images, i-contour files and o-contour files that are matched together. Files that do not have corresponding DICOM/i-contour counterpart are probably not useful at the moment and will not be parsed.
+- This is not directly related to Part 1, but I also make the pipeline save parsed data to storage instead of keeping it in memory to facilitate running different analysis/modelling without re-running the data parsing.
+- I change the visualization output from drawing mask to drawing boundaries of the masks. With multiple masks, drawing the boundaries make it easier to examine the data.
+An example of the updated visualization output is shown below (Red indicates i-contour or blood pool, Blue indicates o-contour or heart muscle):<br/>
+<img src="assets/SCD0000101_59.dcm.png" alt="" width="50%"><br/>
+
+By examining the visualization outputs, I notice that o-contour files of images from patient SCD0000501 seem to be incorrect. These images are excluded from analysis in part 2 (until we vertify the correctness of these contour files).<br/>
+<img src="assets/SCD0000501_219.dcm.png" alt="" width="50%"><br/>
+
+## Part2: Heuristic LV Segmentation approaches
+#### Assumption:
+* Simple thresholding scheme means we use __one specific threshold__ to separate blood pool heart muscle areas.
+* We want to have a segmentation approachs that are generalizable, i.e. approaches that should work across different images.
+
+#### 1. Could you use a simple thresholding scheme to automatically create the i-contours, given the o-contours?
+* To check whether I can find a specific threshold to separate blood pool vs heart muscle areas, I can plot pixel intensity of blood pool vs heart muscle for each image:<br/>
+<img src="assets/pixel_intensity.png" alt="" width="80%"><br/>
+
+Boxplot shows minimum, first quartile, median, third quartile, and max. A good threshold should separate pixel intensity of majority of blood pool from majority of heart muscle. From the boxplot, we see that pixel intensity's interquartile range (i.e majority) of blood pool in one image can overlap with that of heart muscle in onother image.<br/>
+That means, we would not be able to find a specific threshold that would work well across different images. Therefore, we cannot use simple thresholding scheme in this case.
+
+* I also try to generate boxplot for normalized pixel intensity (i.e. pixel intensity normalized to 0-255 range for each image):
+<img src="pixel_intensity_normalized.png" alt="" width="80%"><br/>
+
+We still see that pixel intensity's interquartile range of blood pool in one image can overlap with that of heart muscle in onother image. So, simple thresholding scheme will not work.
+
+#### 2. Do you think that any other heuristic (non-machine learning)-based approaches, besides simple thresholding, would work in this case? Explain.
+Although pixel intensity's interquartile range (i.e majority) of blood pool in one image can overlap with that of heart muscle in onother image, pixel intensity's interquartile range of blood pool and hear muscle in the same image rarely overlap. That means adaptive heuristic-based approaches for individual image would potential work.
+I can think of several heuristic-based approaches:
+* Adaptive and Otsu thresholding: Find an optimal threshold to separate pixel intensity in an image into 2 classes.
+* Edge detection: Apply edge detection filters to find edges inside o-contours. Those edges are likely to correspond to boundaries of blood pool
+* Images of each person seems to correspond to a time-series. If so, object tracking approach might work if we manually annotate i-contour of the 1st image for each patient. 
+
+The initial output of these approaches might be "noisy", so we can perform post-processing to obtain better segmentation, based on expert knowledge. Below are some of my guesses:
+* Each image should probably have only one blood pool area inside o-contour. So, we can apply opening operation and/or contour analysis to remove noise and select the largest contour to be the blood pool segmentation.
+* Since boundaries of blood pool seem to be smooth, we can apply convex hull or curve interpolation to make the segmentation more smooth.
+
+I implemented a quick prototype with Otsu thresholding approach and convex hull postprocessing. The segmentation result is available at:
+A sample output is shown below: Left - Otsu thresholding, Right - Otsu thresolding with convex hull post processing.<br/>
+<img src="assets/otsu_SCD0000101_99.dcm.png" alt="" width="50%"> <img src="assets/otsu_hull_SCD0000101_99.dcm.png" alt="" width="50%"><br/>
+
+To evaluate the segmentation result quantitatively, I look at Intersection over Unition (IoU) score and Dice (F1) score:
+
+| Approach  | Mean IoU Score | Mean Dice Score |
+| ------ | -------- | -------- | ------------- |
+| Otsu threshol | 0.769 | 0.865 |
+| Otsu threshold + Convex Hull | 0.827 | 0.901 | 0.471 |
+
+
+#### 3. What is an appropriate deep learning-based approach to solve this problem?
+Deep learning-based approaches related to semantic segmentation or object detection would potentially work for this problem. I can think of several specific deep learning-based models:
+* U-Net
+* Mask R-CNN
+
+In both of these approaches, model input is the pixel data and model output is  i-contour mask. If we have o-contour mask, we can concantenate it as part of the model input.
+The difference between these model lies in their convolution architectures:
+* U-Net has a series of convolution/MaxPooling for representation learning, then transposed convolution (and skip connection) to predict the i-contour mask
+* Mask-RCNN has a region proposal network to proposal region of interests, then perform fine-tuning and segmentation on the region of interests to predict the i-contour mask.
+
+If we want to find multiple i-contours that might overlap each other in an image, Mask R-CNN would be appropriate. However, in this case, we only have one i-contour in each image, so U-Net would be more appropriate.
+
+#### 4. What are some advantages and disadvantages of the deep learning approach compared your chosen heuristic method?
+Advantages of the deep learning approach:
+* The Deep learning approach work without manually hand-crafted feature extraction (pixel intensity, thresholding, edge detection, etc)
+* The Deep learning approach can potentially work without o-contour mask
+
+Disadvantages of the deep learning approach:
+* The Deep learning approach requires annotated mask of i-contour
+* It is prone to overfitting if we don't have a large and respresentative dataset
+* Convolution operation is not invariant to scale and rotation. Therefore, we usually need to perform data augmentation when training convolutional neural networks.
+
+
