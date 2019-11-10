@@ -145,7 +145,7 @@ The initial output of these approaches might be "noisy", so we can perform post-
 * Each image should probably have only one blood pool area inside o-contour. So, we can apply opening operation and/or contour analysis to remove noise and select the largest contour to be the blood pool segmentation.
 * Since boundaries of blood pool seem to be smooth, we can apply convex hull or curve interpolation to make the segmentation more smooth.
 
-I implemented a quick prototype to evaluate the feasibility of using Otsu thresholding approach and convex hull postprocessing. The segmentation result is available at: https://drive.google.com/open?id=12nfiO3uest38Im7x-Ft4bb6GveFfDIF4
+I implement a quick prototype to evaluate the feasibility of using Otsu thresholding approach and convex hull postprocessing. The segmentation result is available at: https://drive.google.com/open?id=12nfiO3uest38Im7x-Ft4bb6GveFfDIF4
 
 A sample output is shown below (Red indicates annotated i-contour, Yellow indicates predicted i-contour):<br/>
 Left - Otsu thresholding, Right - Otsu thresolding with convex hull post processing.<br/>
@@ -168,11 +168,11 @@ Deep learning-based approaches related to semantic segmentation or object detect
 In these deep learning approaches, model input is the pixel data and model output is i-contour mask. If we have o-contour mask, we can concatenate it as part of the model input.
 The difference between U-Net and Mask R-CNN lies in their convolution architectures:
 * U-Net has a series of convolution/MaxPooling for representation learning, then transposed convolution (and skip connection) to predict the i-contour mask.
-* Mask-RCNN has a region proposal network to proposal region of interests, then perform fine-tuning segmentation on the regions to predict one or more i-contour masks.
+* Mask-RCNN has a region proposal network to proposal region of interests, then perform fine-tuning and segmentation on the regions to predict one or more i-contour masks.
 
 If we want to find multiple i-contours that might overlap each other in an image, Mask R-CNN would be appropriate. In this case, we only expect one i-contour per image, so U-Net would be more appropriate.
 
-I implemented a quick prototype to evaluate the feasibility of using U-Net for i-contour segmentation without o-segmentation. There are 5 patients with 96 matching image-icontour files. For this prototype, I simply train the U-Net model on the first 3 patients, and validate the model on the remaining 2 patients. The best model weight and segmentation result (without any postprocessing) is available at: https://drive.google.com/drive/folders/1PjrCZzGC2nGci1Fg7VZrbBY4v69ppa6G?usp=sharing
+I implement a quick prototype to evaluate the feasibility of using U-Net for i-contour segmentation without o-segmentation. There are 5 patients with 96 matching image-icontour files. For this prototype, I simply train the U-Net model on the first 3 patients, and validate the model on the remaining 2 patients. The best model weight and segmentation result (without any postprocessing) is available at: https://drive.google.com/drive/folders/1PjrCZzGC2nGci1Fg7VZrbBY4v69ppa6G?usp=sharing
 
 | Dataset  | Mean (Std) of IoU Score | Mean (Std) of Dice Score |
 | ------ | -------- | -------- |
