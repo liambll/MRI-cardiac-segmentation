@@ -107,7 +107,7 @@ I would consider adding the below improvements to the pipeline:
 ## Part 1: Parse the o-contours
 #### 1. After building the pipeline, please discuss any changes that you made to the pipeline you built in Phase 1, and why you made those changes.
 I made the following changes to the pipelines built in Phase 1:
-- I add to parameters to specify whether the pipeline parses only i-contour, only o-contour or both, so that we can parse different folders depending on the data we want to analyze. If both i-contour and o-contour are needed, the pipeline parses DICOM images, i-contour files and o-contour files that are matched together. Files that do not have corresponding DICOM/i-contour counterpart are probably not useful at the moment and will not be parsed.
+- I add parameters to specify whether the pipeline parses only i-contour, only o-contour or both, so that we can parse different folders depending on the data we want to analyze. If both i-contour and o-contour are needed, the pipeline parses DICOM images, i-contour files and o-contour files that are matched together. Files that do not have corresponding DICOM and i-contour/o-contours counterpart are probably not useful and will not be parsed.
 - This is not directly related to Part 1, but I also make the pipeline save parsed data to storage instead of keeping it in memory to facilitate running different analysis/modelling without re-running the data parsing.
 - I change the visualization output from drawing mask to drawing boundaries of the masks. With multiple masks, drawing the boundaries make it easier to examine the data. The visualization is available at: https://drive.google.com/open?id=1HFEJF3cDnMuKs3dhOVSahzsAfvdsNhwZ
 
