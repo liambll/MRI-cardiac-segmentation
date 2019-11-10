@@ -198,7 +198,7 @@ Advantages of the deep learning approach (e.g. U-Net) compared to heuristic-base
 * If we have a representative dataset with annotation, Deep learning would potentially outperform heuristic-based methods in complex segmentation tasks.
 
 Disadvantages of the deep learning approach (e.g. U-Net) compared to heuristic-based method (e.g. Otsu Thresholding):
-* Deep learning is considered a 'black box' model and less interpretable.
+* Deep learning is considered a 'black box' approach and less interpretable.
 * Deep learning approach requires annotated mask of i-contour to train. It is usually more computationally intensive.
 * It is prone to overfitting and difficult to find global optima if we don't have a large and respresentative dataset, although we can use transfer learning to mitigate this challenge.
 * Convolution operation is not invariant to scale and rotation. We usually need to perform data augmentation when training convolutional neural networks to mitigate this challenge.
