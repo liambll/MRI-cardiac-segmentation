@@ -144,7 +144,7 @@ The initial output of these approaches might be "noisy", so we can perform post-
 
 I implemented a quick prototype with Otsu thresholding approach and convex hull postprocessing. The segmentation result is available at: https://drive.google.com/open?id=12nfiO3uest38Im7x-Ft4bb6GveFfDIF4
 
-A sample output is shown below:<br/>
+A sample output is shown below (Red indicates annotated i-contour, Yellow indicates predicted i-contour):<br/>
 Left - Otsu thresholding, Right - Otsu thresolding with convex hull post processing.<br/>
 <img src="assets/otsu_SCD0000101_99.dcm.png" alt="" width="25%"> <img src="assets/otsu_hull_SCD0000101_99.dcm.png" alt="" width="25%"><br/>
 
