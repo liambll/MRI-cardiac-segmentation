@@ -145,9 +145,9 @@ The initial output of these approaches might be "noisy", so we can perform post-
 * Each image should probably have only one blood pool area inside o-contour. So, we can apply opening operation and/or contour analysis to remove noise and select the largest contour to be the blood pool segmentation.
 * Since boundaries of blood pool seem to be smooth, we can apply convex hull or curve interpolation to make the segmentation more smooth.
 
-I implement a quick prototype to evaluate the feasibility of using Otsu thresholding approach and convex hull postprocessing. The segmentation result is available at: https://drive.google.com/open?id=12nfiO3uest38Im7x-Ft4bb6GveFfDIF4
-
 __Otsu thresolding with convex hull post processing Prototype__
+
+I implement a quick prototype to evaluate the feasibility of using Otsu thresholding approach and convex hull postprocessing. The segmentation result is available at: https://drive.google.com/open?id=12nfiO3uest38Im7x-Ft4bb6GveFfDIF4
 
 A sample output is shown below (Red indicates annotated i-contour, Yellow indicates predicted i-contour):<br/>
 <img src="assets/otsu_SCD0000101_99.dcm.png" alt="" width="25%"> <img src="assets/otsu_hull_SCD0000101_99.dcm.png" alt="" width="25%"><br/>
@@ -172,7 +172,7 @@ The difference between U-Net and Mask R-CNN lies in their convolution architectu
 * U-Net has a series of convolution/MaxPooling for representation learning, then transposed convolution (and skip connection) to predict the i-contour mask.
 * Mask-RCNN has a region proposal network to proposal region of interests, then perform fine-tuning and segmentation on the regions to predict one or more i-contour masks.
 
-If we want to find multiple i-contours that might overlap each other in an image, Mask R-CNN would be appropriate. In this case, we only expect one i-contour per image, so U-Net would be more appropriate.
+If we want to find multiple i-contours that might overlap each other in an image, Mask R-CNN would be appropriate. In this challenge, we only expect one i-contour per image, so U-Net would be more appropriate and faster to train.
 
 __U-Net Prototype__
 
