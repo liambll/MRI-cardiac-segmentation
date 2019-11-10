@@ -107,6 +107,7 @@ I made the following changes to the pipelines built in Phase 1:
 - I add to _ImageData_ class parameters to specify whether the pipeline parses only i-contour, only o-contour or both (default), so that we can parse different folders depending on the data we want to analyze. If both i-contour and o-contour are needed, the pipeline parses DICOM images, i-contour files and o-contour files that are matched together. Files that do not have corresponding DICOM/i-contour counterpart are probably not useful at the moment and will not be parsed.
 - This is not directly related to Part 1, but I also make the pipeline save parsed data to storage instead of keeping it in memory to facilitate running different analysis/modelling without re-running the data parsing.
 - I change the visualization output from drawing mask to drawing boundaries of the masks. With multiple masks, drawing the boundaries make it easier to examine the data. The visualization is available at: https://drive.google.com/open?id=1HFEJF3cDnMuKs3dhOVSahzsAfvdsNhwZ
+
 An example of the updated visualization output is shown below (Red indicates i-contour or blood pool, Blue indicates o-contour or heart muscle):<br/>
 <img src="assets/SCD0000101_59.dcm.png" alt="" width="25%"><br/>
 
@@ -142,6 +143,7 @@ The initial output of these approaches might be "noisy", so we can perform post-
 * Since boundaries of blood pool seem to be smooth, we can apply convex hull or curve interpolation to make the segmentation more smooth.
 
 I implemented a quick prototype with Otsu thresholding approach and convex hull postprocessing. The segmentation result is available at: https://drive.google.com/open?id=12nfiO3uest38Im7x-Ft4bb6GveFfDIF4
+
 A sample output is shown below:<br/>
 Left - Otsu thresholding, Right - Otsu thresolding with convex hull post processing.<br/>
 <img src="assets/otsu_SCD0000101_99.dcm.png" alt="" width="25%"> <img src="assets/otsu_hull_SCD0000101_99.dcm.png" alt="" width="25%"><br/>
@@ -170,8 +172,9 @@ If we want to find multiple i-contours that might overlap each other in an image
 
 #### 4. What are some advantages and disadvantages of the deep learning approach compared your chosen heuristic method?
 Advantages of the deep learning approach (e.g. U-Net) compared to heuristic-based method (e.g. Otsu Thresholding):
-* The Deep learning approach work without manually "hand-crafted" feature extraction (pixel intensity, edge detection, etc)
-* The Deep learning approach can potentially work without o-contour mask. I imagine without o-contour mask, the segmentation of i-contour would be challenging with Otsu thresholding due to other areas with similar pixel intensity in an image.
+* Deep learning approach work without manually "hand-crafted" feature extraction (pixel intensity, edge detection, etc)
+* Deep learning approach can potentially work without o-contour mask. I imagine without o-contour mask, the segmentation of i-contour would be challenging with Otsu thresholding due to other areas with similar pixel intensity in an image.
+* If we have a representative dataset with annotation, Deep learning would potentially outperform heuristic-based method in challenging segmentation tasks.
 
 Disadvantages of the deep learning approach (e.g. U-Net) compared to heuristic-based method (e.g. Otsu Thresholding):
 * The Deep learning approach requires annotated mask of i-contour to train
