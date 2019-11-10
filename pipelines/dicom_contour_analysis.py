@@ -173,7 +173,9 @@ if __name__ == '__main__':
     image_processing.save_segmentation(parsed_data=parsed_data, prediction=list_otsu_result,
                                        save_path=otsu_result_path)
     logger.info('--IoU Score: Mean {}, Std {}\n--Dice score: Mean {}, Std {}\n'.format(str(np.mean(list_iou_score)),
-                                                                                       str(np.std(list_iou_score)), str(np.mean(list_dice_score)), str(np.std(list_dice_score))))
+                                                                                       str(np.std(list_iou_score)),
+                                                                                       str(np.mean(list_dice_score)),
+                                                                                       str(np.std(list_dice_score))))
 
     # Evaluate segmentation result for Otstu thresholding
     logger.info('Evaluating segmentation result with Otsu thresholding and convex hull post processing ...')
@@ -184,4 +186,6 @@ if __name__ == '__main__':
     image_processing.save_segmentation(parsed_data=parsed_data, prediction=list_otsu_hull_result,
                                        save_path=otsu_hull_result_path)
     logger.info('--IoU Score: Mean {}, Std {}\n--Dice score: Mean {}, Std {}\n'.format(str(np.mean(list_iou_score)),
-                                                                                       str(np.std(list_iou_score)), str(np.mean(list_dice_score)), str(np.std(list_dice_score))))
+                                                                                       str(np.std(list_iou_score)),
+                                                                                       str(np.mean(list_dice_score)),
+                                                                                       str(np.std(list_dice_score))))

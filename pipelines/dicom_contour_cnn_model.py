@@ -84,4 +84,6 @@ if __name__ == '__main__':
     image_processing.save_segmentation(parsed_data=parsed_data, prediction=predicted_labels,
                                        save_path=cnn_result_path)
     logger.info('--IoU Score: Mean {}, Std {}\n--Dice score: Mean {}, Std {}\n'.format(str(np.mean(list_iou_score)),
-                                                                                       str(np.std(list_iou_score)), str(np.mean(list_dice_score)), str(np.std(list_dice_score))))
+                                                                                       str(np.std(list_iou_score)),
+                                                                                       str(np.mean(list_dice_score)),
+                                                                                       str(np.std(list_dice_score))))

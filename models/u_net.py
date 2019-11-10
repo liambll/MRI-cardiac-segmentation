@@ -153,7 +153,7 @@ class UNet:
             train_metric_values = [0] * len(metric_names)
             nb_train_samples = 0
             train_gen = dataset.data_generator(datasource=train_data, batch_size=batch_size, shuffle=True,
-                                               augmentation=False, infinite_loop=False, logger=None)
+                                               augmentation=True, infinite_loop=False, logger=None)
             for step in range(nb_train_steps):
                 batch_img, batch_mask = train_gen.__next__()
                 nb_train_samples += len(batch_img)

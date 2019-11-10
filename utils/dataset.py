@@ -248,6 +248,7 @@ def data_generator(datasource, batch_size=1, shuffle=True, augmentation=False, i
 
         if logger is not None:
             logger.info('Fetching data for {}, batch img shape {}, mask shape {}'.format(str(batch_img_id),
-                                                                                         str(batch_img.shape), str(batch_mask.shape)))
+                                                                                         str(batch_img.shape),
+                                                                                         str(batch_mask.shape)))
 
         yield (batch_img, batch_mask)
