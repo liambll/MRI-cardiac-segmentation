@@ -172,7 +172,7 @@ The difference between U-Net and Mask R-CNN lies in their convolution architectu
 
 If we want to find multiple i-contours that might overlap each other in an image, Mask R-CNN would be appropriate. In this case, we only expect one i-contour per image, so U-Net would be more appropriate.
 
-I implement a quick prototype to evaluate the feasibility of using U-Net for i-contour segmentation without o-segmentation. There are 5 patients with 96 matching image-icontour files. For this prototype, I simply train the U-Net model on the first 3 patients, and validate the model on the remaining 2 patients. The best model weight and segmentation result (without any postprocessing) is available at: https://drive.google.com/drive/folders/1PjrCZzGC2nGci1Fg7VZrbBY4v69ppa6G?usp=sharing
+I implement a quick prototype to evaluate the feasibility of using U-Net for i-contour segmentation without o-segmentation. There are 5 patients with 96 matching image-icontour files. For this prototype, I simply train the U-Net model on the first 3 patients, and validate the model on the remaining 2 patients. The best model weight and segmentation result (without any postprocessing) are available at: https://drive.google.com/drive/folders/1PjrCZzGC2nGci1Fg7VZrbBY4v69ppa6G?usp=sharing
 
 | Dataset  | Mean (Std) of IoU Score | Mean (Std) of Dice Score |
 | ------ | -------- | -------- |
@@ -183,12 +183,12 @@ Further model tuning and post-processing will likely improve the i-contour mask 
 
 #### 4. What are some advantages and disadvantages of the deep learning approach compared your chosen heuristic method?
 Advantages of the deep learning approach (e.g. U-Net) compared to heuristic-based method (e.g. Otsu Thresholding):
-* Deep learning approach work without manually "hand-crafted" feature extraction (pixel intensity, edge detection, etc)
-* Deep learning approach can potentially work without o-contour mask. I imagine without o-contour mask, the segmentation of i-contour would be challenging with Otsu thresholding due to other areas with similar pixel intensity in an image.
-* If we have a representative dataset with annotation, Deep learning would potentially outperform heuristic-based method in challenging segmentation tasks.
+* Deep learning approach works without manually "hand-crafted" feature extraction (pixel intensity, edge detection, etc)
+* Deep learning approach can potentially work without o-contour mask (as shown in the U-Net prototype). Without o-contour mask, the segmentation of i-contour would be challenging using Otsu thresholding because other areas in an image have similar pixel intensity.
+* If we have a representative dataset with annotation, Deep learning would potentially outperform heuristic-based methods in complex segmentation tasks.
 
 Disadvantages of the deep learning approach (e.g. U-Net) compared to heuristic-based method (e.g. Otsu Thresholding):
-* The Deep learning approach requires annotated mask of i-contour to train
+* Deep learning approach requires annotated mask of i-contour to train
 * It is prone to overfitting and difficult to find global optima if we don't have a large and respresentative dataset, although we can use transfer learning to mitigate this challenge.
 * Convolution operation is not invariant to scale and rotation. We usually need to perform data augmentation when training convolutional neural networks to mitigate this challenge.
 
