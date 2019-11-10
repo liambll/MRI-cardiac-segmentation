@@ -120,7 +120,7 @@ There are 46 images with matching i-contour and o-contour files. By examining th
 ## Part2: Heuristic LV Segmentation approaches
 #### Assumption:
 * Simple thresholding scheme means we use __one specific threshold__ to separate blood pool and heart muscle areas.
-* We want to have a segmentation approachs that are generalizable, i.e. approaches that should work across different images.
+* We want to have segmentation approachs that are generalizable, i.e. approaches that should work across different images.
 
 #### 1. Could you use a simple thresholding scheme to automatically create the i-contours, given the o-contours?
 * To check whether I can find a specific threshold to separate blood pool vs heart muscle areas, I plot pixel intensity of blood pool vs heart muscle for each image:<br/>
