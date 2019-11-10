@@ -122,16 +122,16 @@ By examining the visualization outputs, I notice that o-contour files of images 
 * To check whether I can find a specific threshold to separate blood pool vs heart muscle areas, I can plot pixel intensity of blood pool vs heart muscle for each image:<br/>
 <img src="assets/pixel_intensity.png" alt="" width="80%"><br/>
 
-Boxplot shows minimum, first quartile, median, third quartile, and max. A good threshold should separate pixel intensity of majority of blood pool from majority of heart muscle. From the boxplot, we see that pixel intensity's interquartile range (i.e majority) of blood pool in one image can overlap with that of heart muscle in onother image.<br/>
+Boxplot shows minimum, first quartile, median, third quartile, and max. A good threshold should separate pixel intensity of majority of blood pool from majority of heart muscle. From the boxplot, we see that pixel intensity's interquartile range (i.e majority) of blood pool in one image can overlap with that of heart muscle in other images.<br/>
 That means, we would not be able to find a specific threshold that would work well across different images. Therefore, we cannot use simple thresholding scheme in this case.
 
 * I also try to generate boxplot for normalized pixel intensity (i.e. pixel intensity normalized to 0-255 range for each image):
-<img src="pixel_intensity_normalized.png" alt="" width="80%"><br/>
+<img src="assets/pixel_intensity_normalized.png" alt="" width="80%"><br/>
 
 We still see that pixel intensity's interquartile range of blood pool in one image can overlap with that of heart muscle in onother image. So, simple thresholding scheme will not work.
 
 #### 2. Do you think that any other heuristic (non-machine learning)-based approaches, besides simple thresholding, would work in this case? Explain.
-Although pixel intensity's interquartile range (i.e majority) of blood pool in one image can overlap with that of heart muscle in onother image, pixel intensity's interquartile range of blood pool and hear muscle in the same image rarely overlap. That means adaptive heuristic-based approaches for individual image would potential work.
+Although pixel intensity's interquartile range (i.e majority) of blood pool in one image can overlap with that of heart muscle in other images, pixel intensity's interquartile range of blood pool and hear muscle in the same image rarely overlap. That means adaptive heuristic-based approaches for individual image would potential work.
 I can think of several heuristic-based approaches:
 * Adaptive and Otsu thresholding: Find an optimal threshold to separate pixel intensity in an image into 2 classes.
 * Edge detection: Apply edge detection filters to find edges inside o-contours. Those edges are likely to correspond to boundaries of blood pool
@@ -143,12 +143,12 @@ The initial output of these approaches might be "noisy", so we can perform post-
 
 I implemented a quick prototype with Otsu thresholding approach and convex hull postprocessing. The segmentation result is available at:
 A sample output is shown below: Left - Otsu thresholding, Right - Otsu thresolding with convex hull post processing.<br/>
-<img src="assets/otsu_SCD0000101_99.dcm.png" alt="" width="50%"> <img src="assets/otsu_hull_SCD0000101_99.dcm.png" alt="" width="50%"><br/>
+<img src="assets/otsu_SCD0000101_99.dcm.png" alt="" width="40%"> <img src="assets/otsu_hull_SCD0000101_99.dcm.png" alt="" width="40%"><br/>
 
 To evaluate the segmentation result quantitatively, I look at Intersection over Unition (IoU) score and Dice (F1) score:
 
 | Approach  | Mean IoU Score | Mean Dice Score |
-| ------ | -------- | -------- | ------------- |
+| ------ | -------- | -------- |
 | Otsu threshol | 0.769 | 0.865 |
 | Otsu threshold + Convex Hull | 0.827 | 0.901 | 0.471 |
 
