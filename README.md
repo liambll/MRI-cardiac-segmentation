@@ -174,9 +174,10 @@ If we want to find multiple i-contours that might overlap each other in an image
 
 I implement a quick prototype to evaluate the feasibility of using U-Net for i-contour segmentation without o-segmentation. There are 5 patients with 96 matching image-icontour files. For this prototype, I simply train the U-Net model on the first 3 patients, and validate the model on the remaining 2 patients. The best model weight and segmentation result (without any postprocessing) are available at: https://drive.google.com/drive/folders/1PjrCZzGC2nGci1Fg7VZrbBY4v69ppa6G?usp=sharing
 
-Left - Otsu thresolding with convex hull post processing, Right - UNet on trainset <br/>
+Left - Otsu thresolding + convex hull post-processing, Right - UNet on trainset <br/>
 <img src="assets/otsu_hull_SCD0000101_99.dcm.png" alt="" width="25%"> <img src="assets/unet_SCD0000101_99.dcm.png" alt="" width="25%"><br/>
 
+Intersection over Unition (IoU) score and Dice (F1) score of U-Net on train and validation sets:<br/>
 | Dataset  | Mean (Std) of IoU Score | Mean (Std) of Dice Score |
 | ------ | -------- | -------- |
 | Train set | 0.911 (0.068) | 0.952 (0.041) |
