@@ -1,5 +1,5 @@
 # Overview
-The project aims to parse DICOM and corresponding Contour files and identify i-contour .
+The project aims to parse DICOM and corresponding Contour files and create models to segment out i-contour.
 
 Relevant code files:
 ```
