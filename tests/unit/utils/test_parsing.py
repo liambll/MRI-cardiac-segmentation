@@ -53,7 +53,7 @@ class TestParsing(unittest.TestCase):
         os.remove(temp_file)
 
         np.testing.assert_equal(im_data, {parsing.PIXEL_FIELD: pixel_array})
-        
+
     def test_parse_dicom_file_with_intercept_scope(self):
         # create a temporary dicom file
         temp_dir = tempfile.gettempdir()  # get temp directory
@@ -78,7 +78,7 @@ class TestParsing(unittest.TestCase):
         im_data = parsing.parse_dicom_file(temp_file)
         os.remove(temp_file)
 
-        np.testing.assert_equal(im_data, {parsing.PIXEL_FIELD: ds.RescaleIntercept + pixel_array*ds.RescaleSlope})
+        np.testing.assert_equal(im_data, {parsing.PIXEL_FIELD: ds.RescaleIntercept + pixel_array * ds.RescaleSlope})
 
     def test_poly_to_mask(self):
         # create input

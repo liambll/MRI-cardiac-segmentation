@@ -63,7 +63,7 @@ class ImageData:
         self.dicomn_contour_pairs = []
         self.dataset = []
         self.map_dicom_contour(dicoms_path, contours_path, link_path, parse_icontour, parse_ocontour)
-        
+
     def map_dicom_contour(self, dicoms_path, contours_path, link_path,
                           parse_icontour=True, parse_ocontour=True):
         """Map each dicom file to corresponding contour file, if available.
@@ -81,16 +81,16 @@ class ImageData:
         :param contours_path: str, folderpath contains contour files. contours_path should have the below structure:
             contours_path
                 |------original_id_1
-                |         |----i-contours  
+                |         |----i-contours
                 |         |         |-----IM-0001-0001-icontour-manual.txt
                 |         |         |-----IM-0001-0002-icontour-manual.txt
                 |         |          ...
-                |         |----o-contours  
+                |         |----o-contours
                 |         |         |-----IM-0001-0001-ocontour-manual.txt
                 |         |         |-----IM-0001-0002-ocontour-manual.txt
                 |         |         ...
                 |------original_id_2
-                |         |-----i-contours  
+                |         |-----i-contours
                 |         |-----o-contours
                 ...
         :param link_path: str, filepath to csv file that contains LINK_DICOM_FIELD and LINK_CONTOUR_FIELD columns.
@@ -119,7 +119,7 @@ class ImageData:
             # patient's dicom and contour folder both exist
             if os.path.isdir(img_path) and \
                 (not parse_icontour or os.path.isdir(icontour_path)) and \
-                (not parse_ocontour or os.path.isdir(ocontour_path)):
+                    (not parse_ocontour or os.path.isdir(ocontour_path)):
                 img_file_list = glob.glob(os.path.join(img_path, '[!._]*'))  # ignore ._ files created by Mac OS
                 for img_file in img_file_list:
                     img_file_name = os.path.split(img_file)[-1]  # get dicom file name
@@ -131,23 +131,25 @@ class ImageData:
                                          .format(patient_id, img_file_name))
 
                     if parse_icontour:
-                        icontour_filename = ICONTOUR_FILENAME_FORMAT.format(int(img_number))  # find matching i-contour file
+                        icontour_filename = ICONTOUR_FILENAME_FORMAT.format(
+                            int(img_number))  # find matching i-contour file
                         icontour_file = os.path.join(icontour_path, icontour_filename)
                     else:
                         icontour_file = None
-                        
+
                     if parse_ocontour:
-                        ocontour_filename = OCONTOUR_FILENAME_FORMAT.format(int(img_number))  # find matching o-contour file
+                        ocontour_filename = OCONTOUR_FILENAME_FORMAT.format(
+                            int(img_number))  # find matching o-contour file
                         ocontour_file = os.path.join(ocontour_path, ocontour_filename)
                     else:
                         ocontour_file = None
                     if (not parse_icontour or os.path.isfile(icontour_file)) and \
-                        (not parse_ocontour or os.path.isfile(ocontour_file)):
+                            (not parse_ocontour or os.path.isfile(ocontour_file)):
                         self.dicomn_contour_pairs.append((patient_id, img_file, icontour_file, ocontour_file))
                     else:
                         self.logger.info(
-                            'Patient {}: i-contour or o-contour file for {} is missing.'\
-                                        .format(patient_id, img_file_name))
+                            'Patient {}: i-contour or o-contour file for {} is missing.'
+                            .format(patient_id, img_file_name))
             else:
                 self.logger.info('{} or {} is missing.'.format(patient_id, dict_link[patient_id]))
         self.logger.info('Found {} matching dicom and contour paris.'.format(str(len(self.dicomn_contour_pairs))))
@@ -167,19 +169,19 @@ class ImageData:
             try:
                 img_id = patient_id + DELIM + os.path.split(dicom_file)[-1]
                 img_data = parsing.parse_dicom_file(dicom_file)[parsing.PIXEL_FIELD]
-                
+
                 if icontour_file is not None:
                     icountour_data = parsing.parse_contour_file(icontour_file)
                     imask = parsing.poly_to_mask(icountour_data, img_data.shape[1], img_data.shape[0])
                 else:
                     imask = None
-                    
+
                 if ocontour_file is not None:
                     ocountour_data = parsing.parse_contour_file(ocontour_file)
                     omask = parsing.poly_to_mask(ocountour_data, img_data.shape[1], img_data.shape[0])
                 else:
                     omask = None
-                    
+
                 self.dataset.append((img_id, img_data, imask, omask))
             except Exception:
                 error_txt = traceback.format_exc()
@@ -223,29 +225,29 @@ def data_generator(datasource, batch_size=1, shuffle=True, augmentation=False, i
         batch_img_id = []
         batch_img = []
         batch_mask = []
-        for b in range(batch_size):            
+        for b in range(batch_size):
             (img_id, img_data, mask, _) = datasource[index_list[i]]
-            img_data = img_data.astype('float')/np.max(img_data)
+            img_data = img_data.astype('float') / np.max(img_data)
             if augmentation:
                 (img_data, mask) = image_processing.augment_image_pair(img_data, mask)
-            
+
             batch_img_id.append(img_id)
-            batch_img.append(np.stack((img_data,)*3, axis=-1))
+            batch_img.append(np.stack((img_data,) * 3, axis=-1))
             batch_mask.append(mask)
 
             i += 1
             if i == len(index_list):  # move back to the first index if reach the end of index_list
-                if infinite_loop: # reset index to loop over the dataset again
+                if infinite_loop:  # reset index to loop over the dataset again
                     i = 0
-                else: # stop looping over the datasource
+                else:  # stop looping over the datasource
                     flag = False
                     break
 
         batch_img = np.array(batch_img)
         batch_mask = np.expand_dims(np.array(batch_mask), axis=3)
-        
+
         if logger is not None:
             logger.info('Fetching data for {}, batch img shape {}, mask shape {}'.format(str(batch_img_id),
-                        str(batch_img.shape), str(batch_mask.shape)))
+                                                                                         str(batch_img.shape), str(batch_mask.shape)))
 
         yield (batch_img, batch_mask)

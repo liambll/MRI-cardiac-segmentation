@@ -14,7 +14,7 @@ class TestMetrics(unittest.TestCase):
         a = np.array([1, 0, 0, 1])
         b = np.array([1, 1, 0, 0])
         iou = metrics.iou_score(a, b)
-        expected = 1/3
+        expected = 1 / 3
         np.testing.assert_almost_equal(iou, expected, decimal=3)
 
     def test_dice_score(self):

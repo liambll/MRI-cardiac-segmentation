@@ -23,7 +23,7 @@ if __name__ == '__main__':
     # Initiate logger
     logging.basicConfig(level=logging.INFO,
                         handlers=[logging.FileHandler('pipeline_dicom_contour.log'),
-                                                      logging.StreamHandler()])
+                                  logging.StreamHandler()])
     logger = logging.getLogger('pipeline_dicom_contour')
 
     # Intialize ImageData
