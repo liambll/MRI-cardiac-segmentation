@@ -21,7 +21,9 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # Initiate logger
-    logging.basicConfig(filename='pipeline_dicom_contour.log', filemode='w', level=logging.INFO)
+    logging.basicConfig(level=logging.INFO,
+                        handlers=[logging.FileHandler('pipeline_dicom_contour.log'),
+                                                      logging.StreamHandler()])
     logger = logging.getLogger('pipeline_dicom_contour')
 
     # Intialize ImageData
@@ -31,24 +33,24 @@ if __name__ == '__main__':
     # Parse dicom and contour files
     image_data.parse_files()
 
-    # Visualize parsed result
+    # Save parsed result
     if args.output_path is not None:
         os.makedirs(args.output_path, exist_ok=True)
         image_data.visualize_result(args.output_path)
 
     # Perform model training
-    if len(image_data.dataset) > 0:
-        # TODO: set up model and the below code portion will be part of train() function of the model
-        logger.info('Start training ...')
-        for epoch in range(args.nb_epoch):
-            logger.info('Epoch {}:'.format(str(epoch)))
-            data_gen = dataset.data_generator(datasource=image_data.dataset, batch_size=args.batch_size, shuffle=True,
-                                              logger=logger)
-            nb_steps = len(image_data.dataset) // args.batch_size
-            for step in range(nb_steps):
-                batch_img, batch_mask = data_gen.__next__()
-                # TODO: train step
-    
-            # TODO: val step
-    else:
-        logger.info('There is no data for training.')
+#    if len(image_data.dataset) > 0:
+#        # TODO: set up model and the below code portion will be part of train() function of the model
+#        logger.info('Start training ...')
+#        for epoch in range(args.nb_epoch):
+#            logger.info('Epoch {}:'.format(str(epoch)))
+#            data_gen = dataset.data_generator(datasource=image_data.dataset, batch_size=args.batch_size, shuffle=True,
+#                                              logger=logger)
+#            nb_steps = len(image_data.dataset) // args.batch_size
+#            for step in range(nb_steps):
+#                batch_img, batch_mask = data_gen.__next__()
+#                # TODO: train step
+#    
+#            # TODO: val step
+#    else:
+#        logger.info('There is no data for training.')
