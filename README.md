@@ -135,7 +135,7 @@ Although pixel intensity's interquartile range (i.e majority) of blood pool in o
 I can think of several heuristic-based approaches:
 * Adaptive and Otsu thresholding: Find an optimal threshold to separate pixel intensity in an image into 2 classes.
 * Edge detection: Apply edge detection filters to find edges inside o-contours. Those edges are likely to correspond to boundaries of blood pool
-* Images of each person seems to correspond to a time-series. If so, object tracking approach might work if we manually annotate i-contour of the 1st image for each patient. 
+* Images of each person seems to correspond to a time-series. If so, object tracking approach might work if we manually annotate i-contour of the 1st image for each patient.
 
 The initial output of these approaches might be "noisy", so we can perform post-processing to obtain better segmentation, based on expert knowledge. Below are some of my guesses:
 * Each image should probably have only one blood pool area inside o-contour. So, we can apply opening operation and/or contour analysis to remove noise and select the largest contour to be the blood pool segmentation.
@@ -155,15 +155,17 @@ To evaluate the segmentation result quantitatively, I look at Intersection over 
 
 #### 3. What is an appropriate deep learning-based approach to solve this problem?
 Deep learning-based approaches related to semantic segmentation or object detection would potentially work for this problem. I can think of several specific deep learning-based models:
-* U-Net
-* Mask R-CNN
+* Semantic segmentation approach: U-Net
+* Object detection approach: Mask R-CNN
+* If images of each person seems to correspond to a time-series, combining recurrent architecture with convolution architecture could help improve i-contour mask prediction.
 
-In both of these approaches, model input is the pixel data and model output is  i-contour mask. If we have o-contour mask, we can concantenate it as part of the model input.
-The difference between these model lies in their convolution architectures:
+In deep learning approaches, model input is the pixel data and model output is  i-contour mask. If we have o-contour mask, we can concantenate it as part of the model input.
+The difference between U-Net and Mask R-CNN lies in their convolution architectures:
 * U-Net has a series of convolution/MaxPooling for representation learning, then transposed convolution (and skip connection) to predict the i-contour mask
 * Mask-RCNN has a region proposal network to proposal region of interests, then perform fine-tuning and segmentation on the region of interests to predict the i-contour mask.
 
 If we want to find multiple i-contours that might overlap each other in an image, Mask R-CNN would be appropriate. However, in this case, we only have one i-contour in each image, so U-Net would be more appropriate.
+
 
 #### 4. What are some advantages and disadvantages of the deep learning approach compared your chosen heuristic method?
 Advantages of the deep learning approach:
