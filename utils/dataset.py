@@ -202,9 +202,9 @@ class ImageData:
         self.logger.info('Parsed result saved to {}.'.format(output_path))
 
 
-def data_generator(datasource, batch_size=1, shuffle=True, logger=None):
+def data_generator(datasource, batch_size=1, shuffle=True, augmentation=False, infinite_loop=True, logger=None):
     """A generator that returns img_data and corresponding mask.
-    :param datasource:list of tuples (img_id, img_data, mask)
+    :param datasource:list of tuples (img_id, img_data, imask, omask)
     :param batch_size: int, number of observations to load in each batch
     :param shuffle: boolean, whether to shuffle the data at the begining of each epoch
     :param logger: logger object, for debug purpose
@@ -218,22 +218,31 @@ def data_generator(datasource, batch_size=1, shuffle=True, logger=None):
     if shuffle:
         np.random.shuffle(index_list)
 
-    while True:  # loop over the datasource indefinitely
+    flag = True
+    while flag:  # loop over the datasource
         batch_img_id = []
         batch_img = []
         batch_mask = []
-        for b in range(batch_size):
-            (img_id, img_data, mask) = datasource[index_list[i]]
+        for b in range(batch_size):            
+            (img_id, img_data, mask, _) = datasource[index_list[i]]
+            img_data = img_data.astype('float')/np.max(img_data)
+            if augmentation:
+                (img_data, mask) = image_processing.augment_image_pair(img_data, mask)
+            
             batch_img_id.append(img_id)
-            batch_img.append(img_data)
+            batch_img.append(np.stack((img_data,)*3, axis=-1))
             batch_mask.append(mask)
 
             i += 1
             if i == len(index_list):  # move back to the first index if reach the end of index_list
-                i = 0
+                if infinite_loop: # reset index to loop over the dataset again
+                    i = 0
+                else: # stop looping over the datasource
+                    flag = False
+                    break
 
         batch_img = np.array(batch_img)
-        batch_mask = np.array(batch_mask)
+        batch_mask = np.expand_dims(np.array(batch_mask), axis=3)
         
         if logger is not None:
             logger.info('Fetching data for {}, batch img shape {}, mask shape {}'.format(str(batch_img_id),

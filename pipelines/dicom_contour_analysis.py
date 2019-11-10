@@ -17,39 +17,6 @@ import argparse
 import logging
 
 
-def read_parsed_images(data_path, img_dim=256):
-    """Read pixel data and masks from parsed data saved by pipeline_dicom_contour.
-    :param data_path:str, folder path that contain parsed dicom-contour images
-        Each parsed dicom-contour image must have shape (img_dim, img_dim*3)
-    :param img_dim: width of dicomn pixel data
-    :return parsed_data: list of tuple (img_filename, img_data, imask, omask)
-    """
-    
-    img_list = os.listdir(data_path)
-    parsed_data = []
-    for img_filename in img_list:
-        img = cv2.imread(os.path.join(data_path, img_filename), -1) # -1 flag: read raw data image without any conversion
-        img_data = img[:, :img_dim] # dicom pixel data
-        imask = img[:, img_dim:2*img_dim] # i-contour mask
-        omask = img[:, 2*img_dim:] # o-contour mask
-        parsed_data.append((img_filename, img_data, imask, omask))
-        
-    return parsed_data
-            
-            
-def overlay_contours(parsed_data, overlay_path):
-    """Draw boundary of masks for all images
-    :param parsed_data: list of tuple (img_filename, img_data, imask, omask)
-    :param overlay_path: str, path to store images with mask boundaries overlayed
-    """    
-    
-    for (img_filename, img_data, imask, omask) in parsed_data:
-        # Overlay with red for i-contour and blue for o-contour
-        overlay = image_processing.overlay_images(img_data, [imask, omask], colors=[(0, 0, 255), (255, 0, 0)])
-        save_path = os.path.join(overlay_path, img_filename)
-        image_processing.save_images([overlay], save_path, normalize=False)
-        
-
 def extract_pixel_intensity(parsed_data, normalized=False):
     """Extract intensity of of blood pool (inside i-contour) and heart muscle (outside i-contour but inside o-contour)
     :param parsed_data: list of tuple (img_filename, img_data, imask, omask)
@@ -98,12 +65,13 @@ def visualize_boxplot(list_blood_pool, list_heart_muscle, list_label, list_color
     plt.ylabel('Pixel intensity')
     plt.xticks(rotation=90)
     plt.tight_layout()
-    plt.show()
     
     # save plot
     if save_path is not None:
         plt.savefig(save_path, dpi=150)
         plt.close(fig)
+    else:
+        plt.show()
         
         
 def perform_otsu_thresholding(parsed_data):
@@ -132,40 +100,17 @@ def perform_otsu_thresholding(parsed_data):
         list_otsu_hull_result.append(otsu_hull_result)
         
     return list_otsu_result, list_otsu_hull_result
-        
-
-def evaluate_segmentation(parsed_data, prediction, save_path=None):
-    """Perform evaluation of segmentation result
-    :param parsed_data: list of tuple (img_filename, img_data, imask, omask)
-    :param prediction: list, contains predicted i-contour mask
-    :return list_iou_score: list, contains Intersection-Over-Union score for each image
-    :return list_dice_score: list, contains Dice score for each image
-    """
-    
-    list_iou_score = []
-    list_dice_score = []
-    for i in range(len(parsed_data)):
-        (img_filename, img_data, imask, omask) = parsed_data[i]
-        img_pred = prediction[i]/255
-        list_iou_score.append(metrics.iou_score(imask, img_pred))
-        list_dice_score.append(metrics.dice_score(imask, img_pred))
-        
-        if save_path:
-            overlay = image_processing.overlay_images(img_data, [imask, img_pred], colors=[(0, 0, 255), (0, 255, 255)])
-            image_processing.save_images([overlay], os.path.join(save_path, img_filename), normalize=False)
-            
-    return list_iou_score, list_dice_score
 
     
-if __name__ == '__main__':
-    data_path = 'C:/SourceCode/dicom-code-challenge/dataset/final_data/parsed_dicoms_mask/'
-    analysis_path = 'C:/SourceCode/dicom-code-challenge/dataset/final_data/analysis/'
-    
+if __name__ == '__main__':    
     # parse parameters
     parser = argparse.ArgumentParser(description='Analysis of dicom and contour files')
     parser.add_argument('data_path', help='A folderpath for parsed dicom-contour images')
     parser.add_argument('analysis_path', help='A folderpath to store analysis result')
     args = parser.parse_args()
+    
+    data_path = args.data_path
+    analysis_path = args.analysis_path
 
     # Initiate logger
     logging.basicConfig(level=logging.INFO,
@@ -175,7 +120,8 @@ if __name__ == '__main__':
 
 
     # Read parsed data
-    parsed_data = read_parsed_images(data_path, img_dim=256)
+    logger.info('Reading parsed data ...')
+    parsed_data = image_processing.read_parsed_images(data_path, img_dim=256)
     
     ############################
     ## Check data correctness ##
@@ -184,10 +130,10 @@ if __name__ == '__main__':
     logger.info('Overlaying contours on dicom pixel data ...')
     overlay_path = os.path.join(analysis_path, 'overlay')
     os.makedirs(overlay_path, exist_ok=True)
-    overlay_contours(parsed_data, overlay_path)
+    image_processing.save_overlay_images(parsed_data, overlay_path)
     logger.info('Overlayed result is saved to {}.\n'.format(overlay_path))
     
-    # Exclude 'SCD0000501' for subsequent analysis because the data seems incorrect
+    # Exclude 'SCD0000501' for subsequent analysis because the o-contour data seems incorrect
     logger.info('Exclude all SCD0000501 images from subsequent analsysis.')
     parsed_data = [data for data in parsed_data if 'SCD0000501' not in data[0]]
         
@@ -225,16 +171,20 @@ if __name__ == '__main__':
     logger.info('Evaluating segmentation result with Otsu thresholding ...')
     otsu_result_path = os.path.join(analysis_path, 'otsu')
     os.makedirs(otsu_result_path, exist_ok=True)
-    list_iou_score, list_dice_score = evaluate_segmentation(parsed_data=parsed_data, prediction=list_otsu_result,
-                                           save_path=otsu_result_path)
-    logger.info('--Mean IoU score: {}, Dice score: {}\n'.format(str(np.mean(list_iou_score)),
-                str(np.mean(list_dice_score))))
+    list_iou_score, list_dice_score = metrics.evaluate_segmentation(parsed_data=parsed_data,
+                                                                    prediction=list_otsu_result)
+    image_processing.save_segmentation(parsed_data=parsed_data, prediction=list_otsu_result,
+                                       save_path=otsu_result_path)
+    logger.info('--IoU Score: Mean {}, Std {}\n--Dice score: Mean {}, Std {}\n'.format(str(np.mean(list_iou_score)),
+                str(np.std(list_iou_score)), str(np.mean(list_dice_score)), str(np.std(list_dice_score))))
         
     # Evaluate segmentation result for Otstu thresholding
     logger.info('Evaluating segmentation result with Otsu thresholding and convex hull post processing ...')
     otsu_hull_result_path = os.path.join(analysis_path, 'otsu_hull')
     os.makedirs(otsu_hull_result_path, exist_ok=True)
-    list_iou_score, list_dice_score = evaluate_segmentation(parsed_data=parsed_data, prediction=list_otsu_hull_result,
-                                           save_path=otsu_hull_result_path)
-    logger.info('--Mean IoU score: {}, Dice score: {}\n'.format(str(np.mean(list_iou_score)),
-                str(np.mean(list_dice_score))))
+    list_iou_score, list_dice_score = metrics.evaluate_segmentation(parsed_data=parsed_data,
+                                                                    prediction=list_otsu_hull_result)
+    image_processing.save_segmentation(parsed_data=parsed_data, prediction=list_otsu_hull_result,
+                                       save_path=otsu_hull_result_path)
+    logger.info('--IoU Score: Mean {}, Std {}\n--Dice score: Mean {}, Std {}\n'.format(str(np.mean(list_iou_score)),
+                str(np.std(list_iou_score)), str(np.mean(list_dice_score)), str(np.std(list_dice_score))))
