@@ -193,7 +193,7 @@ Further model training and post-processing will likely improve the i-contour mas
 
 #### 4. What are some advantages and disadvantages of the deep learning approach compared your chosen heuristic method?
 Advantages of the deep learning approach (e.g. U-Net) compared to heuristic-based method (e.g. Otsu Thresholding):
-* Deep learning approach works without manually "hand-crafted" feature extraction (pixel intensity, edge detection, etc).
+* Deep learning approach works without manually "hand-crafted" feature extraction (pixel intensity, edge detection, etc). We only need to provide the network with inputs and desired outputs and the network can learn relevant features by itself.
 * Deep learning approach can potentially work without o-contour mask (as shown in the U-Net prototype). Without o-contour mask, the segmentation of i-contour would be challenging using Otsu thresholding because other areas in an image have similar pixel intensity.
 * If we have a representative dataset with annotation, Deep learning would potentially outperform heuristic-based methods in complex segmentation tasks.
 
