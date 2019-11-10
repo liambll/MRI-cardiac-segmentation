@@ -5,9 +5,9 @@ Relevant code files:
 ```
 root
  |---pipelines
- |     |------pipeline_dicom_contour.py: This is the main pipeline that perform the parsing and prepare dataset
- |     |------dicom_contour_analysis.py: This is the main analysis for data visualization and image thresholding (new code for Phase 2)
- |     |------dicom_contour_cnn_model.py: This is the main pipeline for U-net model training (new code for Phase 2)
+ |     |---pipeline_dicom_contour.py: This is the main pipeline that perform the parsing and prepare dataset
+ |     |---dicom_contour_analysis.py: This is the main analysis for data visualization and image thresholding (new code for Phase 2)
+ |     |---dicom_contour_cnn_model.py: This is the main pipeline for U-net model training (new code for Phase 2)
  |---utils
  |     |---parsing.py: contains provided file/data parsing functions
  |     |---dataset.py: contains ImageData class (for parsing) and data_geneartor (for iterating through data)
@@ -18,10 +18,10 @@ root
  |---tests
        |---unit
             |---utils
-                 |----test_parsing.py: contains unittest for utils/parsing.py
-                 |----test_dataset.py: contains unittest for utils/dataset.py
-                 |----test_image_processing.py: contains unittest for utils/image_processing.py (new code for Phase 2)
-                 |----test_metrics.py: contains unittest for utils/metrics.py (new code for Phase 2)
+                 |---test_parsing.py: contains unittest for utils/parsing.py
+                 |---test_dataset.py: contains unittest for utils/dataset.py
+                 |---test_image_processing.py: contains unittest for utils/image_processing.py (new code for Phase 2)
+                 |---test_metrics.py: contains unittest for utils/metrics.py (new code for Phase 2)
 ```
 
 # PHASE 1: DATA PROCESSING
