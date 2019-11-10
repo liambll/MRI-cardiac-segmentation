@@ -172,7 +172,7 @@ The difference between U-Net and Mask R-CNN lies in their convolution architectu
 
 If we want to find multiple i-contours that might overlap each other in an image, Mask R-CNN would be appropriate. In this case, we only expect one i-contour per image, so U-Net would be more appropriate.
 
-I implement a quick prototype to evaluate the feasibility of using U-Net for i-contour segmentation without o-segmentation. There are 5 patients with 96 matching image-icontour files. For this prototype, I simply train the U-Net model on the first 3 patients, and validate the model on the remaining 2 patients. The best model weight and segmentation result (without any postprocessing) is available at: https://drive.google.com/drive/folders/1PjrCZzGC2nGci1Fg7VZrbBY4v69ppa6G?usp=sharing
+I implement a quick prototype to evaluate the feasibility of using U-Net for i-contour segmentation without o-segmentation. There are 5 patients with 96 matching image-icontour files. For this prototype, I simply train the U-Net model on the first 3 patients, and validate the model on the remaining 2 patients. The best model weight and segmentation result (without any postprocessing) are available at: https://drive.google.com/drive/folders/1PjrCZzGC2nGci1Fg7VZrbBY4v69ppa6G?usp=sharing
 
 | Dataset  | Mean (Std) of IoU Score | Mean (Std) of Dice Score |
 | ------ | -------- | -------- |
