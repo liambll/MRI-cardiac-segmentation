@@ -120,13 +120,13 @@ By examining the visualization outputs, I notice that o-contour files of images 
 * We want to have a segmentation approachs that are generalizable, i.e. approaches that should work across different images.
 
 #### 1. Could you use a simple thresholding scheme to automatically create the i-contours, given the o-contours?
-* To check whether I can find a specific threshold to separate blood pool vs heart muscle areas, I can plot pixel intensity of blood pool vs heart muscle for each image:<br/>
+* To check whether I can find a specific threshold to separate blood pool vs heart muscle areas, I plot pixel intensity of blood pool vs heart muscle for each image:<br/>
 <img src="assets/pixel_intensity.png" alt="" width="80%"><br/>
 
 Each boxplot shows minimum, first quartile, median, third quartile, and max values of pixel intensity in an image. A good threshold should separate majority of blood pool pixel intensity from majority of heart muscle pixel intensity.
 <br/>From the boxplot, we see that pixel intensity's interquartile range of blood pool in one image can overlap with that of heart muscle in other images. That means, we would not be able to find a specific threshold that would work well across different images. Therefore, we cannot use simple thresholding scheme in this case.
 
-* I also try to generate boxplot for normalized pixel intensity (i.e. pixel intensity normalized to 0-255 range for each image):<br/>
+* I try to generate boxplot for normalized pixel intensity (i.e. pixel intensity normalized to 0-255 range for each image):<br/>
 <img src="assets/pixel_intensity_normalized.png" alt="" width="80%"><br/>
 
 We still see that pixel intensity's interquartile range of blood pool in one image can overlap with that of heart muscle in other images. So, simple thresholding scheme will not work.
@@ -160,7 +160,7 @@ To evaluate the segmentation result quantitatively, I look at Intersection over 
 Deep learning-based approaches related to semantic segmentation or object detection would potentially work for this problem. I can think of several specific deep learning-based models:
 * __Semantic segmentation approach__: U-Net
 * __Object detection approach__: Mask R-CNN
-* If images of each person seems correspond to a time-series, combining recurrent architecture with convolution architecture could help improve i-contour mask prediction.
+* If images of each person correspond to a time-series, combining recurrent architecture with convolution architecture could help improve i-contour mask prediction.
 
 In these deep learning approaches, model input is the pixel data and model output is i-contour mask. If we have o-contour mask, we can concatenate it as part of the model input.
 The difference between U-Net and Mask R-CNN lies in their convolution architectures:
