@@ -33,7 +33,9 @@ root
  
 # SEGMENTATION MODELS
 __Otsu thresolding with convex hull post processing__
+
 o-contour annotation are easier to obtain, so let's assume we can use o-contour as input for our computer vision model. A quick prototype is implemented to evaluate the feasibility of using Otsu thresholding approach and convex hull postprocessing to segment i-contour, given the MRI 2D slide and o-contour.
+
 The segmentation result is available at: https://drive.google.com/open?id=12nfiO3uest38Im7x-Ft4bb6GveFfDIF4
 
 A sample output is shown below (Red indicates annotated i-contour, Yellow indicates predicted i-contour):<br/>
@@ -49,8 +51,10 @@ To evaluate the segmentation result quantitatively, we look at Intersection over
 
 
 __U-Net Prototype__
+
 Without o-contour mask, the segmentation of i-contour would be challenging using Otsu thresholding because other areas in an image have similar pixel intensity. This is where convolutional neural network comes to rescue.
 A quick prototype is implemented to evaluate the feasibility of using U-Net for i-contour segmentation without o-segmentation. There are 5 patients with 96 matching image-icontour files. For this prototype, we simply train the U-Net model on the first 3 patients (for only 20 epoches), and validate the model on the remaining 2 patients.
+
 The best model weight and segmentation result (without any postprocessing) are available at: https://drive.google.com/drive/folders/1PjrCZzGC2nGci1Fg7VZrbBY4v69ppa6G?usp=sharing
 
 U-Net can potentially outperform Otsu thresholding approach, even without o-contour mask.<br/>
