@@ -3,4 +3,4 @@ numpy==1.16.1
 opencv_python==3.4.3.18
 pydicom==1.3.0
 pandas==0.24.1
-Pillow==6.2.1
+Pillow==9.0.1
